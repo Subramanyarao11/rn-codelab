@@ -1,0 +1,175 @@
+'use client'
+
+import { useCallback, useEffect, useRef, useState } from 'react'
+import dynamic from 'next/dynamic'
+import type { ProblemDefinition } from '@/lib/types'
+import { Sidebar } from '@/components/layout/Sidebar'
+import { TopBar } from '@/components/layout/TopBar'
+import { WorkspacePanels } from '@/components/layout/WorkspacePanels'
+import { ProblemPanel } from '@/components/problem/ProblemPanel'
+import { LocalPreview } from '@/components/preview/LocalPreview'
+import { PreviewActions } from '@/components/preview/PreviewActions'
+import { buildSnackUrl } from '@/lib/snack'
+import { TestPanel } from '@/components/tests/TestPanel'
+import { EditorToolbar } from '@/components/editor/EditorToolbar'
+import { useStoreHydrated } from '@/hooks/useStoreHydrated'
+import { useStore } from '@/lib/store'
+import { isPersistedSolution, resolveWorkspaceCode } from '@/lib/workspaceCode'
+
+const CodeEditor = dynamic(() => import('@/components/editor/CodeEditor'), {
+  ssr: false,
+  loading: () => (
+    <div className="flex h-full items-center justify-center bg-[#1e1e1e] text-zinc-500">
+      Loading editor…
+    </div>
+  ),
+})
+
+interface ChallengeWorkspaceProps {
+  problem: ProblemDefinition
+}
+
+export function ChallengeWorkspace({ problem }: ChallengeWorkspaceProps) {
+  const storeHydrated = useStoreHydrated()
+  const progress = useStore((s) => s.progress[problem.id])
+  const saveCode = useStore((s) => s.saveCode)
+  const resetProblem = useStore((s) => s.resetProblem)
+  const clearSavedCode = useStore((s) => s.clearSavedCode)
+  const markSolutionViewed = useStore((s) => s.markSolutionViewed)
+
+  const [code, setCode] = useState(() => resolveWorkspaceCode(problem, progress))
+  const [showHint, setShowHint] = useState(false)
+  const [showingSolution, setShowingSolution] = useState(false)
+  const [runKey, setRunKey] = useState(0)
+  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const showingSolutionRef = useRef(false)
+  const skipPersistRef = useRef(false)
+  const codeBeforeSolutionRef = useRef<string | null>(null)
+
+  const setWorkspaceCode = useCallback((next: string, options?: { persist?: boolean }) => {
+    if (options?.persist === false) {
+      skipPersistRef.current = true
+    }
+    setCode(next)
+  }, [])
+
+  // Drop solution text that was accidentally saved to localStorage (e.g. via Monaco onChange)
+  useEffect(() => {
+    if (!storeHydrated) return
+    if (isPersistedSolution(progress?.userCode, problem)) {
+      clearSavedCode(problem.id)
+    }
+  }, [storeHydrated, problem.id, problem.solutionCode, progress?.userCode, clearSavedCode, problem])
+
+  // Load draft only when switching problems or after localStorage rehydrates — not on every autosave
+  useEffect(() => {
+    if (!storeHydrated) return
+    const saved = useStore.getState().progress[problem.id]
+    setWorkspaceCode(resolveWorkspaceCode(problem, saved), { persist: false })
+    showingSolutionRef.current = false
+    setShowingSolution(false)
+    setShowHint(false)
+    setRunKey(0)
+    codeBeforeSolutionRef.current = null
+  }, [storeHydrated, problem.id, problem.brokenCode, problem.solutionCode, problem, setWorkspaceCode])
+
+  const handleCodeChange = useCallback(
+    (value: string) => {
+      setCode(value)
+      if (skipPersistRef.current) {
+        skipPersistRef.current = false
+        return
+      }
+      if (showingSolutionRef.current) return
+      if (value === problem.solutionCode) return
+      if (saveTimer.current) clearTimeout(saveTimer.current)
+      saveTimer.current = setTimeout(() => {
+        saveCode(problem.id, value)
+      }, 500)
+    },
+    [problem.id, problem.solutionCode, saveCode]
+  )
+
+  const handleReset = () => {
+    resetProblem(problem.id)
+    showingSolutionRef.current = false
+    setShowingSolution(false)
+    setWorkspaceCode(problem.brokenCode, { persist: false })
+    setRunKey((k) => k + 1)
+  }
+
+  const handleShowSolution = () => {
+    if (showingSolution) {
+      showingSolutionRef.current = false
+      setShowingSolution(false)
+      const draft = codeBeforeSolutionRef.current
+      codeBeforeSolutionRef.current = null
+      const restored =
+        draft != null && !isPersistedSolution(draft, problem)
+          ? draft
+          : resolveWorkspaceCode(problem, progress)
+      setWorkspaceCode(restored, { persist: false })
+    } else {
+      markSolutionViewed(problem.id)
+      codeBeforeSolutionRef.current = code
+      showingSolutionRef.current = true
+      setShowingSolution(true)
+      setWorkspaceCode(problem.solutionCode, { persist: false })
+    }
+    setRunKey((k) => k + 1)
+  }
+
+  const handleRun = () => {
+    setRunKey((k) => k + 1)
+  }
+
+  const handleOpenSnack = () => {
+    window.open(buildSnackUrl(code, 'web'), '_blank', 'noopener,noreferrer')
+  }
+
+  return (
+    <div className="flex h-screen overflow-hidden bg-zinc-950">
+      <Sidebar />
+
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+        <TopBar
+          problem={problem}
+          showHint={showHint}
+          onToggleHint={() => setShowHint((h) => !h)}
+          onReset={handleReset}
+          onShowSolution={handleShowSolution}
+          showingSolution={showingSolution}
+        />
+
+        {showingSolution && (
+          <div className="shrink-0 border-b border-amber-500/20 bg-amber-500/10 px-4 py-2 text-sm text-amber-300">
+            Solution loaded in editor and preview — click Check to verify all tests pass, then
+            hide and fix it yourself
+          </div>
+        )}
+
+        <div className="min-h-0 flex-1">
+          <WorkspacePanels
+            problemPanel={<ProblemPanel problem={problem} showHint={showHint} />}
+            editorActions={<EditorToolbar />}
+            editorPanel={
+              <CodeEditor value={code} onChange={handleCodeChange} readOnly={false} />
+            }
+            previewPanel={<LocalPreview code={code} refreshKey={runKey} />}
+            previewActions={
+              <PreviewActions onRun={handleRun} onOpenSnack={handleOpenSnack} />
+            }
+            testPanel={
+              <TestPanel
+                key={problem.id}
+                problem={problem}
+                code={code}
+                showingSolution={showingSolution}
+              />
+            }
+          />
+        </div>
+      </div>
+    </div>
+  )
+}

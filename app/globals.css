@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #09090b;
+  --foreground: #fafafa;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  min-height: 100%;
+}
+
+/* Locked layout only on challenge IDE pages */
+html.layout-locked,
+html.layout-locked body {
+  height: 100%;
+  overflow: hidden;
+}
+
+/* react-resizable-panels */
+[data-panel-group] {
+  height: 100%;
+}
+
+[data-panel] {
+  overflow: hidden;
+}
