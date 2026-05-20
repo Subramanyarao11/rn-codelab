@@ -1,7 +1,9 @@
 'use client'
 
 import { createElement } from 'react'
-import { render, act, cleanup, waitFor, fireEvent } from '@testing-library/react'
+import { act } from 'react-dom/test-utils'
+import { render, cleanup, fireEvent } from '@testing-library/react'
+import { waitFor } from '@testing-library/dom'
 import * as RN from 'react-native'
 import type { TestCase } from '@/lib/types'
 

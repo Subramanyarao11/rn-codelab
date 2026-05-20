@@ -9,11 +9,12 @@ export function generateStaticParams() {
 }
 
 interface PageProps {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
-export default function ProblemPage({ params }: PageProps) {
-  const id = parseInt(params.id, 10)
+export default async function ProblemPage({ params }: PageProps) {
+  const { id: idStr } = await params
+  const id = parseInt(idStr, 10)
   if (isNaN(id)) notFound()
 
   const problem = getProblem(id)

@@ -1,31 +1,35 @@
 /** @type {import('next').NextConfig} */
+
+const transpilePackages = [
+  'react-native',
+  'react-native-web',
+  '@react-navigation/native',
+  '@react-navigation/native-stack',
+  '@react-native-async-storage/async-storage',
+  'react-native-safe-area-context',
+  'react-native-screens',
+]
+
+const webExtensions = ['.web.js', '.web.jsx', '.web.ts', '.web.tsx']
+
+const defaultExtensions = ['.tsx', '.ts', '.jsx', '.js', '.mjs', '.json']
+
 const nextConfig = {
-  transpilePackages: [
-    '@babel/standalone',
-    'react-native',
-    'react-native-web',
-    '@react-navigation/native',
-    '@react-navigation/native-stack',
-    '@react-native-async-storage/async-storage',
-  ],
-  webpack: (config, { dev }) => {
+  transpilePackages,
+  // Turbopack (default for `npm run dev`) — fast HMR; mirrors webpack aliases below
+  turbopack: {
+    resolveAlias: {
+      'react-native': 'react-native-web',
+    },
+    resolveExtensions: [...webExtensions, ...defaultExtensions],
+  },
+  // Webpack (used for `next build` and `npm run dev:webpack`)
+  webpack: (config) => {
     config.resolve.alias = {
       ...(config.resolve.alias || {}),
       'react-native$': 'react-native-web',
     }
-    config.resolve.extensions = [
-      '.web.js',
-      '.web.jsx',
-      '.web.ts',
-      '.web.tsx',
-      ...config.resolve.extensions,
-    ]
-
-    // Stale webpack cache in dev often needs `rm -rf .next` — disable to keep HMR reliable.
-    if (dev) {
-      config.cache = false
-    }
-
+    config.resolve.extensions = [...webExtensions, ...config.resolve.extensions]
     return config
   },
 }

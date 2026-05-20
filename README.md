@@ -26,15 +26,16 @@ Open [http://localhost:3000](http://localhost:3000) for the challenge grid, or j
 
 | Command | Description |
 |---------|-------------|
-| `npm run dev` | Start the dev server |
-| `npm run dev:clean` | Clear `.next` cache and start dev (use if HMR looks stale) |
-| `npm run build` | Production build |
+| `npm run dev` | Dev server with **Turbopack** (fast HMR) |
+| `npm run dev:webpack` | Dev server with Webpack (fallback if Turbopack has issues) |
+| `npm run dev:clean` | Clear `.next` cache and start Turbopack dev |
+| `npm run build` | Production build (Webpack) |
 | `npm run fresh` | Full reinstall (`node_modules` + `.next`) then dev |
 
 ## Stack
 
-- Next.js 14 (App Router), TypeScript, Tailwind CSS
-- Zustand + `localStorage` for progress and editor settings
+- **Next.js 16** (App Router) + **React 19**, TypeScript, Tailwind CSS
+- Zustand 5 + `localStorage` for progress and editor settings
 - `@monaco-editor/react` + `monaco-editor`
 - `@babel/standalone` for JSX in the preview/test runner
 - `react-native-web` for preview and tests
@@ -46,8 +47,8 @@ Open [http://localhost:3000](http://localhost:3000) for the challenge grid, or j
 app/                 # Routes (home + /problems/[id])
 components/          # Workspace UI (editor, preview, tests, layout)
 lib/problems.ts      # Challenge definitions, starter code, solutions, tests
-lib/               # Store, eval sandbox, Monaco setup, themes
-hooks/             # Client hooks (e.g. store hydration)
+lib/                 # Store, eval sandbox, Monaco setup, themes
+hooks/               # Client hooks (e.g. store hydration)
 ```
 
 ## License
