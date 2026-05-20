@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import dynamic from 'next/dynamic'
+import { AnimatePresence, motion } from 'framer-motion'
 import type { ProblemDefinition } from '@/lib/types'
 import { Sidebar } from '@/components/layout/Sidebar'
 import { TopBar } from '@/components/layout/TopBar'
@@ -12,6 +13,7 @@ import { PreviewActions } from '@/components/preview/PreviewActions'
 import { buildSnackUrl } from '@/lib/snack'
 import { TestPanel } from '@/components/tests/TestPanel'
 import { EditorToolbar } from '@/components/editor/EditorToolbar'
+import { WorkspaceTour } from '@/components/onboarding/WorkspaceTour'
 import { useStoreHydrated } from '@/hooks/useStoreHydrated'
 import { useStore } from '@/lib/store'
 import { shouldSimulateIosKeyboard, type PreviewPlatformOS } from '@/lib/previewPlatform'
@@ -42,8 +44,11 @@ export function ChallengeWorkspace({ problem }: ChallengeWorkspaceProps) {
   const resetProblem = useStore((s) => s.resetProblem)
   const clearSavedCode = useStore((s) => s.clearSavedCode)
   const markSolutionViewed = useStore((s) => s.markSolutionViewed)
+  const onboardingComplete = useStore((s) => s.ui.onboardingComplete)
+  const completeOnboarding = useStore((s) => s.completeOnboarding)
 
   const [code, setCode] = useState(() => resolveWorkspaceCode(problem, progress))
+  const [tourOpen, setTourOpen] = useState(false)
   const [showHint, setShowHint] = useState(false)
   const [showingSolution, setShowingSolution] = useState(false)
   const [runKey, setRunKey] = useState(0)
@@ -94,6 +99,17 @@ export function ChallengeWorkspace({ problem }: ChallengeWorkspaceProps) {
       document.activeElement.blur()
     }
   }, [problem.id])
+
+  useEffect(() => {
+    if (!storeHydrated || onboardingComplete) return
+    const timer = window.setTimeout(() => setTourOpen(true), 900)
+    return () => window.clearTimeout(timer)
+  }, [storeHydrated, onboardingComplete])
+
+  const handleTourFinish = () => {
+    completeOnboarding()
+    setTourOpen(false)
+  }
 
   const handleCodeChange = useCallback(
     (value: string) => {
@@ -163,14 +179,24 @@ export function ChallengeWorkspace({ problem }: ChallengeWorkspaceProps) {
           onReset={handleReset}
           onShowSolution={handleShowSolution}
           showingSolution={showingSolution}
+          onShowTour={() => setTourOpen(true)}
         />
 
-        {showingSolution && (
-          <div className="shrink-0 border-b border-amber-500/20 bg-amber-500/10 px-4 py-2 text-sm text-amber-300">
-            Solution loaded in editor and preview — click Check to verify all tests pass, then
-            hide and fix it yourself
-          </div>
-        )}
+        <AnimatePresence>
+          {showingSolution && (
+            <motion.div
+              key="solution-banner"
+              className="shrink-0 border-b border-amber-500/20 bg-amber-500/10 px-4 py-2 text-sm text-amber-300"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.22 }}
+            >
+              Solution loaded in editor and preview — click Check to verify all tests pass, then
+              hide and fix it yourself
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <div className="min-h-0 flex-1">
           <WorkspacePanels
@@ -207,6 +233,12 @@ export function ChallengeWorkspace({ problem }: ChallengeWorkspaceProps) {
           />
         </div>
       </div>
+
+      <WorkspaceTour
+        open={tourOpen}
+        onComplete={handleTourFinish}
+        onSkip={handleTourFinish}
+      />
     </div>
   )
 }

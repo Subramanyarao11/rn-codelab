@@ -36,11 +36,13 @@ export function WorkspacePanels({
             className="h-full"
           >
             <Panel defaultSize={38} minSize={15} maxSize={65}>
-              <PanelFrame label="Problem">{problemPanel}</PanelFrame>
+              <PanelFrame label="Problem" tourId="problem">
+                {problemPanel}
+              </PanelFrame>
             </Panel>
             <ResizeHandle direction="vertical" />
             <Panel defaultSize={62} minSize={25}>
-              <PanelFrame label="Editor" actions={editorActions}>
+              <PanelFrame label="Editor" tourId="editor" actions={editorActions}>
                 {editorPanel}
               </PanelFrame>
             </Panel>
@@ -57,13 +59,15 @@ export function WorkspacePanels({
             className="h-full"
           >
             <Panel defaultSize={58} minSize={20} maxSize={80}>
-              <PanelFrame label="Preview" actions={previewActions}>
+              <PanelFrame label="Preview" tourId="preview" actions={previewActions}>
                 {previewPanel}
               </PanelFrame>
             </Panel>
             <ResizeHandle direction="vertical" />
             <Panel defaultSize={42} minSize={18} maxSize={70}>
-              <PanelFrame label="Tests">{testPanel}</PanelFrame>
+              <PanelFrame label="Tests" tourId="tests">
+                {testPanel}
+              </PanelFrame>
             </Panel>
           </PanelGroup>
         </Panel>

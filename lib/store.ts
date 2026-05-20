@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { AppStore, EditorSettings } from './types'
+import type { AppStore, EditorSettings, UiState } from './types'
 
 const defaultProgress = {
   completed: false,
@@ -15,11 +15,14 @@ export const defaultEditorSettings: EditorSettings = {
   wordWrap: true,
 }
 
+const defaultUi = { onboardingComplete: false }
+
 export const useStore = create<AppStore>()(
   persist(
     (set) => ({
       progress: {},
       editor: defaultEditorSettings,
+      ui: defaultUi,
 
       markComplete: (id) =>
         set((s) => ({
@@ -65,13 +68,29 @@ export const useStore = create<AppStore>()(
         set((s) => ({
           editor: { ...s.editor, ...patch },
         })),
+
+      completeOnboarding: () =>
+        set((s) => ({
+          ui: { ...s.ui, onboardingComplete: true },
+        })),
+
+      resetOnboarding: () =>
+        set((s) => ({
+          ui: { ...s.ui, onboardingComplete: false },
+        })),
     }),
     {
       name: 'rn-debug-labs-progress',
       partialize: (state) => ({
         progress: state.progress,
         editor: state.editor,
+        ui: state.ui,
       }),
+      merge: (persisted, current) => {
+        const p = persisted as Partial<AppStore> | undefined
+        const ui: UiState = { ...defaultUi, ...p?.ui }
+        return { ...current, ...p, ui }
+      },
     }
   )
 )

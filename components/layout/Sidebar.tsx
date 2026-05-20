@@ -2,10 +2,12 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { motion } from 'framer-motion'
 import { Bug, Check, ChevronLeft, Circle } from 'lucide-react'
 import { PROBLEMS, TOTAL_PROBLEMS } from '@/lib/problems'
 import { useStore } from '@/lib/store'
 import { cn } from '@/lib/cn'
+import { fadeIn } from '@/lib/motion'
 
 export function Sidebar() {
   const pathname = usePathname()
@@ -14,8 +16,12 @@ export function Sidebar() {
   const isHome = pathname === '/'
 
   return (
-    <aside className="flex h-full w-[220px] shrink-0 flex-col border-r border-zinc-800/90 bg-[#0c0c0e]">
-      {/* Brand */}
+    <motion.aside
+      data-tour="sidebar"
+      className="flex h-full w-[220px] shrink-0 flex-col border-r border-zinc-800/90 bg-[#0c0c0e]"
+      {...fadeIn}
+      transition={{ duration: 0.35 }}
+    >
       <Link
         href="/"
         className="flex items-center gap-2.5 border-b border-zinc-800/90 px-4 py-4 transition-colors hover:bg-zinc-900/30"
@@ -32,7 +38,6 @@ export function Sidebar() {
       </Link>
 
       <div className="flex-1 overflow-y-auto py-3">
-        {/* Learn section placeholder — Chai-style structure */}
         <div className="mb-4 px-3">
           <p className="mb-2 px-1 text-[10px] font-bold uppercase tracking-[0.18em] text-amber-500">
             Learn RN
@@ -46,7 +51,7 @@ export function Sidebar() {
           <p className="mb-2 px-1 text-[10px] font-bold uppercase tracking-[0.18em] text-amber-500">
             Fix the Bug
           </p>
-          <nav className="space-y-0.5">
+          <nav data-tour="sidebar-challenges" className="space-y-0.5">
             {PROBLEMS.map((problem) => {
               const isActive = pathname === `/problems/${problem.id}`
               const isComplete = progress[problem.id]?.completed
@@ -57,15 +62,22 @@ export function Sidebar() {
                   href={`/problems/${problem.id}`}
                   prefetch
                   className={cn(
-                    'group flex items-center gap-2 rounded-md px-2 py-2 text-[13px] transition-all',
+                    'group relative flex items-center gap-2 rounded-md px-2 py-2 text-[13px] transition-colors',
                     isActive
-                      ? 'bg-amber-500/15 font-medium text-amber-100 ring-1 ring-amber-500/25'
+                      ? 'font-medium text-amber-100'
                       : 'text-zinc-400 hover:bg-zinc-800/60 hover:text-zinc-200'
                   )}
                 >
+                  {isActive && (
+                    <motion.span
+                      layoutId="sidebar-active"
+                      className="absolute inset-0 rounded-md bg-amber-500/15 ring-1 ring-amber-500/25"
+                      transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+                    />
+                  )}
                   <span
                     className={cn(
-                      'flex h-5 w-5 shrink-0 items-center justify-center rounded text-[10px] font-bold tabular-nums',
+                      'relative z-[1] flex h-5 w-5 shrink-0 items-center justify-center rounded text-[10px] font-bold tabular-nums',
                       isActive
                         ? 'bg-amber-500/25 text-amber-400'
                         : 'bg-zinc-800 text-zinc-500 group-hover:text-zinc-400'
@@ -77,7 +89,7 @@ export function Sidebar() {
                       problem.id
                     )}
                   </span>
-                  <span className="truncate leading-tight">{problem.title}</span>
+                  <span className="relative z-[1] truncate leading-tight">{problem.title}</span>
                 </Link>
               )
             })}
@@ -85,7 +97,6 @@ export function Sidebar() {
         </div>
       </div>
 
-      {/* Footer */}
       <div className="border-t border-zinc-800/90 p-3">
         {!isHome && (
           <Link
@@ -107,6 +118,6 @@ export function Sidebar() {
           </span>
         </div>
       </div>
-    </aside>
+    </motion.aside>
   )
 }

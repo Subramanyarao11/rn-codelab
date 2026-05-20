@@ -1,20 +1,27 @@
 'use client'
 
 import Link from 'next/link'
+import { motion } from 'framer-motion'
 import { Bug, Check, ChevronRight } from 'lucide-react'
 import { PROBLEMS, TOTAL_PROBLEMS } from '@/lib/problems'
 import { useStore } from '@/lib/store'
 import { cn } from '@/lib/cn'
+import { fadeInUp, staggerContainer, staggerItem } from '@/lib/motion'
 
 export function HomeContent() {
   const progress = useStore((s) => s.progress)
   const completedCount = PROBLEMS.filter((p) => progress[p.id]?.completed).length
   const firstOpen = PROBLEMS.find((p) => !progress[p.id]?.completed) ?? PROBLEMS[0]
+  const progressPct = (completedCount / TOTAL_PROBLEMS) * 100
 
   return (
     <div className="min-h-screen overflow-y-auto bg-zinc-950">
-      {/* Header */}
-      <header className="border-b border-zinc-800/90 bg-[#0c0c0e]/80">
+      <motion.header
+        className="border-b border-zinc-800/90 bg-[#0c0c0e]/80"
+        initial={{ opacity: 0, y: -6 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35 }}
+      >
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500/30 to-teal-500/20 ring-1 ring-amber-500/25">
@@ -33,11 +40,10 @@ export function HomeContent() {
             </span>
           </div>
         </div>
-      </header>
+      </motion.header>
 
       <main className="mx-auto max-w-6xl px-6 py-12">
-        {/* Hero */}
-        <div className="mb-10">
+        <motion.div className="mb-10" {...fadeInUp}>
           <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-amber-500">
             Fix the Bug
           </p>
@@ -50,17 +56,23 @@ export function HomeContent() {
             Hands-on debugging labs inspired by interactive React courses. Edit real RN code in the
             browser, preview with Expo Snack, and validate your fix with automated tests.
           </p>
-          <Link
-            href={`/problems/${firstOpen.id}`}
-            className="inline-flex h-9 items-center gap-2 rounded-lg bg-amber-500 px-4 text-sm font-semibold text-white transition-colors hover:bg-amber-400"
-          >
-            {completedCount === 0 ? 'Start first challenge' : 'Continue learning'}
-            <ChevronRight className="h-4 w-4" />
-          </Link>
-        </div>
+          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <Link
+              href={`/problems/${firstOpen.id}`}
+              className="inline-flex h-9 items-center gap-2 rounded-lg bg-amber-500 px-4 text-sm font-semibold text-white transition-colors hover:bg-amber-400"
+            >
+              {completedCount === 0 ? 'Start first challenge' : 'Continue learning'}
+              <ChevronRight className="h-4 w-4" />
+            </Link>
+          </motion.div>
+        </motion.div>
 
-        {/* Progress bar */}
-        <div className="mb-8">
+        <motion.div
+          className="mb-8"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.15, duration: 0.35 }}
+        >
           <div className="mb-2 flex justify-between text-xs text-zinc-500">
             <span>Challenges completed</span>
             <span>
@@ -68,70 +80,77 @@ export function HomeContent() {
             </span>
           </div>
           <div className="h-1.5 overflow-hidden rounded-full bg-zinc-800">
-            <div
-              className="h-full rounded-full bg-gradient-to-r from-amber-500 to-teal-500 transition-all duration-500"
-              style={{ width: `${(completedCount / TOTAL_PROBLEMS) * 100}%` }}
+            <motion.div
+              className="h-full rounded-full bg-gradient-to-r from-amber-500 to-teal-500"
+              initial={{ width: 0 }}
+              animate={{ width: `${progressPct}%` }}
+              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             />
           </div>
-        </div>
+        </motion.div>
 
-        {/* Challenge grid */}
-        <div className="grid gap-4 sm:grid-cols-2">
+        <motion.div
+          className="grid gap-4 sm:grid-cols-2"
+          variants={staggerContainer}
+          initial="initial"
+          animate="animate"
+        >
           {PROBLEMS.map((problem) => {
             const isComplete = progress[problem.id]?.completed
 
             return (
-              <Link
-                key={problem.id}
-                href={`/problems/${problem.id}`}
-                className={cn(
-                  'group relative rounded-xl border bg-zinc-900/60 p-5 transition-all',
-                  isComplete
-                    ? 'border-green-500/20 hover:border-green-500/40'
-                    : 'border-zinc-800 hover:border-amber-500/30 hover:bg-zinc-900'
-                )}
-              >
-                <div className="mb-3 flex items-start justify-between">
-                  {isComplete ? (
-                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-green-500/15 ring-1 ring-green-500/30">
-                      <Check className="h-3.5 w-3.5 text-green-400" strokeWidth={3} />
-                    </span>
-                  ) : (
-                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-zinc-800 text-xs font-bold tabular-nums text-zinc-500 group-hover:bg-amber-500/15 group-hover:text-amber-400">
-                      {problem.id}
-                    </span>
+              <motion.div key={problem.id} variants={staggerItem}>
+                <Link
+                  href={`/problems/${problem.id}`}
+                  className={cn(
+                    'group relative block rounded-xl border bg-zinc-900/60 p-5 transition-colors',
+                    isComplete
+                      ? 'border-green-500/20 hover:border-green-500/40'
+                      : 'border-zinc-800 hover:border-amber-500/30 hover:bg-zinc-900'
                   )}
-                  <span
-                    className={cn(
-                      'rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide',
-                      isComplete
-                        ? 'bg-green-500/15 text-green-400'
-                        : 'bg-zinc-800 text-zinc-500'
+                >
+                  <div className="mb-3 flex items-start justify-between">
+                    {isComplete ? (
+                      <span className="flex h-7 w-7 items-center justify-center rounded-full bg-green-500/15 ring-1 ring-green-500/30">
+                        <Check className="h-3.5 w-3.5 text-green-400" strokeWidth={3} />
+                      </span>
+                    ) : (
+                      <span className="flex h-7 w-7 items-center justify-center rounded-full bg-zinc-800 text-xs font-bold tabular-nums text-zinc-500 group-hover:bg-amber-500/15 group-hover:text-amber-400">
+                        {problem.id}
+                      </span>
                     )}
-                  >
-                    {isComplete ? 'Fixed' : `FTB #${problem.id}`}
-                  </span>
-                </div>
-
-                <h2 className="mb-1 font-semibold text-zinc-50 group-hover:text-amber-100">
-                  {problem.title}
-                </h2>
-                <p className="mb-4 text-sm leading-snug text-zinc-500">{problem.subtitle}</p>
-
-                <div className="flex flex-wrap gap-1.5">
-                  {problem.tags.slice(0, 3).map((tag) => (
                     <span
-                      key={tag}
-                      className="rounded-full bg-zinc-800/80 px-2 py-0.5 text-[11px] text-zinc-400"
+                      className={cn(
+                        'rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide',
+                        isComplete
+                          ? 'bg-green-500/15 text-green-400'
+                          : 'bg-zinc-800 text-zinc-500'
+                      )}
                     >
-                      {tag}
+                      {isComplete ? 'Fixed' : `FTB #${problem.id}`}
                     </span>
-                  ))}
-                </div>
-              </Link>
+                  </div>
+
+                  <h2 className="mb-1 font-semibold text-zinc-50 group-hover:text-amber-100">
+                    {problem.title}
+                  </h2>
+                  <p className="mb-4 text-sm leading-snug text-zinc-500">{problem.subtitle}</p>
+
+                  <div className="flex flex-wrap gap-1.5">
+                    {problem.tags.slice(0, 3).map((tag) => (
+                      <span
+                        key={tag}
+                        className="rounded-full bg-zinc-800/80 px-2 py-0.5 text-[11px] text-zinc-400"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </Link>
+              </motion.div>
             )
           })}
-        </div>
+        </motion.div>
       </main>
     </div>
   )

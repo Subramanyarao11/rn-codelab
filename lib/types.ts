@@ -68,13 +68,20 @@ export interface ProblemProgress {
   userCode: string | null
 }
 
+export interface UiState {
+  onboardingComplete: boolean
+}
+
 export interface AppStore {
   progress: Record<number, ProblemProgress>
   editor: EditorSettings
+  ui: UiState
   markComplete: (id: number) => void
   markSolutionViewed: (id: number) => void
   saveCode: (id: number, code: string) => void
   resetProblem: (id: number) => void
   clearSavedCode: (id: number) => void
   setEditorSettings: (patch: Partial<EditorSettings>) => void
+  completeOnboarding: () => void
+  resetOnboarding: () => void
 }
