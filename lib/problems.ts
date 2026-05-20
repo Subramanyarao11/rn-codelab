@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     difficulty: 'intermediate',
     tags: ['TextInput', 'controlled input', 'state'],
     description:
-      'This form has a TextInput that should let users type a name and display it below. But no matter what you type, the input field does not update and the display stays blank.',
+      'This form has a TextInput that should let users type a name and display it below. But no matter what you type, the input field does not update and the greeting still shows "stranger".',
     symptoms: [
       'TextInput does not reflect typed characters',
       'Display always shows "stranger"',
@@ -207,6 +207,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   card: {
+    flex: 1,
     backgroundColor: '#6200ea',
     borderRadius: 12,
     padding: 24,
@@ -240,9 +241,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#6200ea',
     borderRadius: 12,
     padding: 24,
+    minWidth: 280,
     justifyContent: 'center',
     alignItems: 'center',
-    width: 280,
   },
   title: { color: '#fff', fontSize: 24, fontWeight: 'bold' },
   subtitle: { color: '#ddd', fontSize: 14, marginTop: 6 },
@@ -288,7 +289,7 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  outer: { padding: 16, backgroundColor: '#fff' },
+  outer: { flex: 1, padding: 16, backgroundColor: '#fff' },
   header: { fontSize: 22, fontWeight: 'bold', marginBottom: 12 },
   row: { padding: 14, borderBottomWidth: 1, borderColor: '#eee' },
 });`,
@@ -300,7 +301,7 @@ export default function App() {
   return (
     <View style={styles.outer}>
       <Text style={styles.header} testID="header">My List</Text>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
         {items.map(item => (
           <View key={item.id} style={styles.row} testID={\`row-\${item.id}\`}>
             <Text>{item.label}</Text>
@@ -314,6 +315,7 @@ export default function App() {
 const styles = StyleSheet.create({
   outer: { flex: 1, padding: 16, backgroundColor: '#fff' },
   header: { fontSize: 22, fontWeight: 'bold', marginBottom: 12 },
+  scroll: { flex: 1 },
   scrollContent: { paddingBottom: 32 },
   row: { padding: 14, borderBottomWidth: 1, borderColor: '#eee' },
 });`,
@@ -433,6 +435,14 @@ const styles = StyleSheet.create({
       { id: '5a', description: 'App renders without crashing', type: 'no_crash' },
       { id: '5b', description: 'TextInput is present', type: 'dom_exists', selector: 'note-input' },
       { id: '5c', description: 'Save button is present', type: 'dom_exists', selector: 'save-btn' },
+      {
+        id: '5d',
+        description: 'Loads saved note from AsyncStorage on mount',
+        type: 'dom_text',
+        selector: 'note-input',
+        expectedText: 'My saved note',
+        storageSeed: { note: 'My saved note' },
+      },
     ],
   },
   {
@@ -554,7 +564,22 @@ const styles = StyleSheet.create({
     testCases: [
       { id: '6a', description: 'Home screen renders', type: 'dom_exists', selector: 'home-title' },
       { id: '6b', description: 'Navigate button exists', type: 'dom_exists', selector: 'nav-btn' },
-      { id: '6c', description: 'App renders without crashing', type: 'no_crash' },
+      {
+        id: '6c',
+        description: 'Details screen shows product name after navigation',
+        type: 'interaction',
+        action: 'press',
+        actionTarget: 'nav-btn',
+        selector: 'detail-name',
+        expectedText: 'Widget Pro',
+      },
+      {
+        id: '6d',
+        description: 'Details screen shows correct id',
+        type: 'dom_text',
+        selector: 'detail-id',
+        expectedText: 'ID: 42',
+      },
     ],
   },
   {

@@ -39,6 +39,8 @@ export interface TestCase {
   action?: 'press' | 'type'
   actionTarget?: string
   actionValue?: string
+  /** Seed AsyncStorage before render (key → value) */
+  storageSeed?: Record<string, string>
   status: TestStatus
 }
 

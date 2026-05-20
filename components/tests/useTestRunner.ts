@@ -27,10 +27,25 @@ function queryByTestId(testId: string): HTMLElement | null {
   return root.querySelector(`[data-testid="${testId}"]`) as HTMLElement | null
 }
 
+function getElementText(el: HTMLElement): string {
+  if (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement) {
+    return el.value
+  }
+  return (el.textContent ?? '').trim()
+}
+
 function getTextContent(testId: string): string {
   const el = queryByTestId(testId)
   if (!el) return ''
-  return (el.textContent ?? '').trim()
+  return getElementText(el)
+}
+
+async function seedAsyncStorage(seed: Record<string, string>) {
+  const AsyncStorage = (await import('@react-native-async-storage/async-storage')).default
+  await AsyncStorage.clear()
+  for (const [key, value] of Object.entries(seed)) {
+    await AsyncStorage.setItem(key, value)
+  }
 }
 
 function findNativeTextInput(el: HTMLElement): HTMLInputElement | HTMLTextAreaElement | null {
@@ -170,6 +185,11 @@ export async function runTests(
 
   const container = getTestContainer()
 
+  const storageSeed = testCases.find((tc) => tc.storageSeed)?.storageSeed
+  if (storageSeed) {
+    await seedAsyncStorage(storageSeed)
+  }
+
   const WrappedApp = () =>
     createElement(TestHarness, null, createElement(Component))
 
@@ -197,5 +217,11 @@ export async function runTests(
   }
 
   cleanup()
+
+  if (storageSeed) {
+    const AsyncStorage = (await import('@react-native-async-storage/async-storage')).default
+    await AsyncStorage.clear()
+  }
+
   return { results }
 }
