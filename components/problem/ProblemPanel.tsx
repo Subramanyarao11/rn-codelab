@@ -43,6 +43,22 @@ export function ProblemPanel({ problem, showHint }: ProblemPanelProps) {
         </ul>
       </div>
 
+      {problem.howToTest && problem.howToTest.length > 0 && (
+        <div className="mb-4 rounded-md border border-teal-500/25 bg-teal-950/25 px-3 py-2.5">
+          <h3 className="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-teal-400/90">
+            How to see this bug
+          </h3>
+          <ul className="space-y-1 text-sm text-zinc-300">
+            {problem.howToTest.map((step, index) => (
+              <li key={step} className="flex gap-2">
+                <span className="shrink-0 text-teal-500/70">{index + 1}.</span>
+                <span>{step}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       <div className="mb-4">
         <h3 className="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-zinc-500">
           Your task

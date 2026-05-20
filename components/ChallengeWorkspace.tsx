@@ -14,7 +14,13 @@ import { TestPanel } from '@/components/tests/TestPanel'
 import { EditorToolbar } from '@/components/editor/EditorToolbar'
 import { useStoreHydrated } from '@/hooks/useStoreHydrated'
 import { useStore } from '@/lib/store'
-import { isPersistedSolution, resolveWorkspaceCode } from '@/lib/workspaceCode'
+import { shouldSimulateIosKeyboard, type PreviewPlatformOS } from '@/lib/previewPlatform'
+import {
+  hasCrashyAsyncEffect,
+  isPersistedSolution,
+  resolveWorkspaceCode,
+  shouldDiscardSavedCode,
+} from '@/lib/workspaceCode'
 
 const CodeEditor = dynamic(() => import('@/components/editor/CodeEditor'), {
   ssr: false,
@@ -41,6 +47,9 @@ export function ChallengeWorkspace({ problem }: ChallengeWorkspaceProps) {
   const [showHint, setShowHint] = useState(false)
   const [showingSolution, setShowingSolution] = useState(false)
   const [runKey, setRunKey] = useState(0)
+  const [previewPlatform, setPreviewPlatform] = useState<PreviewPlatformOS>(() =>
+    problem.id === 7 ? 'ios' : 'web'
+  )
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const showingSolutionRef = useRef(false)
   const skipPersistRef = useRef(false)
@@ -53,13 +62,16 @@ export function ChallengeWorkspace({ problem }: ChallengeWorkspaceProps) {
     setCode(next)
   }, [])
 
-  // Drop solution text that was accidentally saved to localStorage (e.g. via Monaco onChange)
+  // Drop invalid drafts: saved solution, or React-19-crashy useEffect(async ...)
   useEffect(() => {
     if (!storeHydrated) return
-    if (isPersistedSolution(progress?.userCode, problem)) {
+    if (shouldDiscardSavedCode(progress?.userCode, problem)) {
       clearSavedCode(problem.id)
+      if (hasCrashyAsyncEffect(progress?.userCode)) {
+        setWorkspaceCode(problem.brokenCode, { persist: false })
+      }
     }
-  }, [storeHydrated, problem.id, problem.solutionCode, progress?.userCode, clearSavedCode, problem])
+  }, [storeHydrated, problem.id, problem.solutionCode, problem.brokenCode, progress?.userCode, clearSavedCode, problem, setWorkspaceCode])
 
   // Load draft only when switching problems or after localStorage rehydrates — not on every autosave
   useEffect(() => {
@@ -70,8 +82,18 @@ export function ChallengeWorkspace({ problem }: ChallengeWorkspaceProps) {
     setShowingSolution(false)
     setShowHint(false)
     setRunKey(0)
+    setPreviewPlatform(problem.id === 7 ? 'ios' : 'web')
     codeBeforeSolutionRef.current = null
   }, [storeHydrated, problem.id, problem.brokenCode, problem.solutionCode, problem, setWorkspaceCode])
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+    document.documentElement.scrollTop = 0
+    document.body.scrollTop = 0
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur()
+    }
+  }, [problem.id])
 
   const handleCodeChange = useCallback(
     (value: string) => {
@@ -82,6 +104,7 @@ export function ChallengeWorkspace({ problem }: ChallengeWorkspaceProps) {
       }
       if (showingSolutionRef.current) return
       if (value === problem.solutionCode) return
+      if (hasCrashyAsyncEffect(value)) return
       if (saveTimer.current) clearTimeout(saveTimer.current)
       saveTimer.current = setTimeout(() => {
         saveCode(problem.id, value)
@@ -124,11 +147,12 @@ export function ChallengeWorkspace({ problem }: ChallengeWorkspaceProps) {
   }
 
   const handleOpenSnack = () => {
-    window.open(buildSnackUrl(code, 'web'), '_blank', 'noopener,noreferrer')
+    const snackPlatform = problem.id === 7 ? previewPlatform : 'web'
+    window.open(buildSnackUrl(code, snackPlatform), '_blank', 'noopener,noreferrer')
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-zinc-950">
+    <div className="fixed inset-0 z-0 flex overflow-hidden bg-zinc-950">
       <Sidebar />
 
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">
@@ -155,9 +179,22 @@ export function ChallengeWorkspace({ problem }: ChallengeWorkspaceProps) {
             editorPanel={
               <CodeEditor value={code} onChange={handleCodeChange} readOnly={false} />
             }
-            previewPanel={<LocalPreview code={code} refreshKey={runKey} />}
+            previewPanel={
+              <LocalPreview
+                code={code}
+                refreshKey={runKey}
+                platformOS={problem.id === 7 ? previewPlatform : 'web'}
+                simulateKeyboard={shouldSimulateIosKeyboard(problem.id, previewPlatform)}
+              />
+            }
             previewActions={
-              <PreviewActions onRun={handleRun} onOpenSnack={handleOpenSnack} />
+              <PreviewActions
+                onRun={handleRun}
+                onOpenSnack={handleOpenSnack}
+                showPlatformPicker={problem.id === 7}
+                platform={previewPlatform}
+                onPlatformChange={setPreviewPlatform}
+              />
             }
             testPanel={
               <TestPanel

@@ -28,5 +28,5 @@ export function DesktopGate({ children }: DesktopGateProps) {
     return <MobileBlocker />
   }
 
-  return <>{children}</>
+  return <div className="h-full min-h-0 overflow-hidden">{children}</div>
 }

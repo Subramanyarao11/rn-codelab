@@ -1,15 +1,27 @@
 'use client'
 
-import { createElement } from 'react'
-import { act } from 'react-dom/test-utils'
-import { render, cleanup, fireEvent } from '@testing-library/react'
+import { createElement, act } from 'react'
+import { createRoot, type Root } from 'react-dom/client'
+import { fireEvent } from '@testing-library/dom'
 import { waitFor } from '@testing-library/dom'
 import * as RN from 'react-native'
 import type { TestCase } from '@/lib/types'
 
 type TestInput = Omit<TestCase, 'status'>
 
+type ActGlobal = typeof globalThis & { IS_REACT_ACT_ENVIRONMENT?: boolean }
+
+function setActEnvironment(enabled: boolean) {
+  const g = globalThis as ActGlobal
+  if (enabled) {
+    g.IS_REACT_ACT_ENVIRONMENT = true
+  } else {
+    delete g.IS_REACT_ACT_ENVIRONMENT
+  }
+}
+
 let testContainer: HTMLDivElement | null = null
+let testRoot: Root | null = null
 
 function getTestContainer(): HTMLDivElement {
   if (!testContainer) {
@@ -18,10 +30,27 @@ function getTestContainer(): HTMLDivElement {
     testContainer.setAttribute('data-testid', 'test-root')
     document.body.appendChild(testContainer)
   }
-  // FlatList / flex layouts need a sized parent on react-native-web
   testContainer.style.cssText =
     'position:relative;width:400px;height:700px;display:flex;flex-direction:column;overflow:hidden;'
   return testContainer
+}
+
+async function mountTestTree(element: React.ReactElement, container: HTMLElement) {
+  await act(async () => {
+    if (!testRoot) {
+      testRoot = createRoot(container)
+    }
+    testRoot.render(element)
+  })
+}
+
+async function unmountTestTree() {
+  const root = testRoot
+  testRoot = null
+  if (!root) return
+  await act(async () => {
+    root.unmount()
+  })
 }
 
 function queryByTestId(testId: string): HTMLElement | null {
@@ -171,59 +200,61 @@ export async function runTests(
   userCode: string,
   testCases: TestInput[]
 ): Promise<{ results: TestCase[]; error?: string }> {
-  cleanup()
-
-  let Component: React.ComponentType
+  setActEnvironment(true)
   try {
-    const { evalUserCode } = await import('@/lib/evalUserCode')
-    Component = evalUserCode(userCode)
-  } catch (err) {
-    const message = err instanceof Error ? err.message : 'Failed to parse code'
-    return {
-      results: testCases.map((tc) => ({ ...tc, status: 'fail' as const })),
-      error: message,
+    await unmountTestTree()
+
+    let Component: React.ComponentType
+    try {
+      const { evalUserCode } = await import('@/lib/evalUserCode')
+      Component = evalUserCode(userCode)
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to parse code'
+      return {
+        results: testCases.map((tc) => ({ ...tc, status: 'fail' as const })),
+        error: message,
+      }
     }
-  }
 
-  const container = getTestContainer()
+    const container = getTestContainer()
 
-  const storageSeed = testCases.find((tc) => tc.storageSeed)?.storageSeed
-  if (storageSeed) {
-    await seedAsyncStorage(storageSeed)
-  }
-
-  const WrappedApp = () =>
-    createElement(TestHarness, null, createElement(Component))
-
-  try {
-    await act(async () => {
-      render(createElement(WrappedApp), { container })
-    })
-    // Allow FlatList / effects to mount on react-native-web
-    await act(async () => {
-      await new Promise((r) => setTimeout(r, 300))
-    })
-  } catch (err) {
-    cleanup()
-    const message = err instanceof Error ? err.message : 'Component failed to render'
-    return {
-      results: testCases.map((tc) => ({ ...tc, status: 'fail' as const })),
-      error: message,
+    const storageSeed = testCases.find((tc) => tc.storageSeed)?.storageSeed
+    if (storageSeed) {
+      await seedAsyncStorage(storageSeed)
     }
+
+    const WrappedApp = () =>
+      createElement(TestHarness, null, createElement(Component))
+
+    try {
+      await mountTestTree(createElement(WrappedApp), container)
+      await act(async () => {
+        await new Promise((r) => setTimeout(r, 300))
+      })
+    } catch (err) {
+      await unmountTestTree()
+      const message = err instanceof Error ? err.message : 'Component failed to render'
+      return {
+        results: testCases.map((tc) => ({ ...tc, status: 'fail' as const })),
+        error: message,
+      }
+    }
+
+    const results: TestCase[] = []
+    for (const tc of testCases) {
+      const status = await runSingleTest(tc)
+      results.push({ ...tc, status })
+    }
+
+    await unmountTestTree()
+
+    if (storageSeed) {
+      const AsyncStorage = (await import('@react-native-async-storage/async-storage')).default
+      await AsyncStorage.clear()
+    }
+
+    return { results }
+  } finally {
+    setActEnvironment(false)
   }
-
-  const results: TestCase[] = []
-  for (const tc of testCases) {
-    const status = await runSingleTest(tc)
-    results.push({ ...tc, status })
-  }
-
-  cleanup()
-
-  if (storageSeed) {
-    const AsyncStorage = (await import('@react-native-async-storage/async-storage')).default
-    await AsyncStorage.clear()
-  }
-
-  return { results }
 }

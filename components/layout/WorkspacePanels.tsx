@@ -26,7 +26,7 @@ export function WorkspacePanels({
       <PanelGroup
         direction="horizontal"
         autoSaveId="rn-labs-main-columns"
-        className="h-full"
+        className="h-full min-h-0"
       >
         {/* Left column: problem + editor */}
         <Panel defaultSize={52} minSize={28} maxSize={75}>

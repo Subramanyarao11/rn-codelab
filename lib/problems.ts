@@ -38,7 +38,7 @@ export default function App() {
         items={data}
         render={({ item }) => (
           <View style={styles.item} testID={\`item-\${item.id}\`}>
-            <Text>{item.name}</Text>
+            <Text style={styles.itemText}>{item.name}</Text>
           </View>
         )}
       />
@@ -48,8 +48,9 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, backgroundColor: '#fff' },
-  title: { fontSize: 22, fontWeight: 'bold', marginBottom: 12 },
+  title: { fontSize: 22, fontWeight: 'bold', marginBottom: 12, color: '#111827' },
   item: { padding: 12, borderBottomWidth: 1, borderColor: '#eee' },
+  itemText: { color: '#111827', fontSize: 16 },
 });`,
     solutionCode: `import { View, FlatList, Text, StyleSheet } from 'react-native';
 
@@ -71,7 +72,7 @@ export default function App() {
         initialNumToRender={data.length}
         renderItem={({ item }) => (
           <View style={styles.item} testID={\`item-\${item.id}\`}>
-            <Text>{item.name}</Text>
+            <Text style={styles.itemText}>{item.name}</Text>
           </View>
         )}
       />
@@ -81,9 +82,10 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, backgroundColor: '#fff' },
-  title: { fontSize: 22, fontWeight: 'bold', marginBottom: 12 },
+  title: { fontSize: 22, fontWeight: 'bold', marginBottom: 12, color: '#111827' },
   list: { flex: 1 },
   item: { padding: 12, borderBottomWidth: 1, borderColor: '#eee' },
+  itemText: { color: '#111827', fontSize: 16 },
 });`,
     testCases: [
       { id: '1a', description: "Renders the title 'Tech Stack'", type: 'dom_text', selector: 'title', expectedText: 'Tech Stack' },
@@ -122,6 +124,7 @@ export default function App() {
       <TextInput
         style={styles.input}
         placeholder="Type here..."
+        placeholderTextColor="#9ca3af"
         testID="name-input"
       />
       <Text testID="display" style={styles.display}>
@@ -133,9 +136,9 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 24, backgroundColor: '#fff' },
-  label: { fontSize: 16, marginBottom: 8 },
-  input: { borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12, fontSize: 16 },
-  display: { marginTop: 20, fontSize: 20, fontWeight: 'bold' },
+  label: { fontSize: 16, marginBottom: 8, color: '#111827' },
+  input: { borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12, fontSize: 16, color: '#111827' },
+  display: { marginTop: 20, fontSize: 20, fontWeight: 'bold', color: '#111827' },
 });`,
     solutionCode: `import { useState } from 'react';
 import { View, TextInput, Text, StyleSheet } from 'react-native';
@@ -149,6 +152,7 @@ export default function App() {
       <TextInput
         style={styles.input}
         placeholder="Type here..."
+        placeholderTextColor="#9ca3af"
         testID="name-input"
         value={name}
         onChangeText={setName}
@@ -162,9 +166,9 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 24, backgroundColor: '#fff' },
-  label: { fontSize: 16, marginBottom: 8 },
-  input: { borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12, fontSize: 16 },
-  display: { marginTop: 20, fontSize: 20, fontWeight: 'bold' },
+  label: { fontSize: 16, marginBottom: 8, color: '#111827' },
+  input: { borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12, fontSize: 16, color: '#111827' },
+  display: { marginTop: 20, fontSize: 20, fontWeight: 'bold', color: '#111827' },
 });`,
     testCases: [
       { id: '2a', description: "Shows 'Hello, stranger!' initially", type: 'dom_text', selector: 'display', expectedText: 'Hello, stranger!' },
@@ -280,7 +284,7 @@ export default function App() {
       <ScrollView>
         {items.map(item => (
           <View key={item.id} style={styles.row} testID={\`row-\${item.id}\`}>
-            <Text>{item.label}</Text>
+            <Text style={styles.rowText}>{item.label}</Text>
           </View>
         ))}
       </ScrollView>
@@ -290,8 +294,9 @@ export default function App() {
 
 const styles = StyleSheet.create({
   outer: { flex: 1, padding: 16, backgroundColor: '#fff' },
-  header: { fontSize: 22, fontWeight: 'bold', marginBottom: 12 },
+  header: { fontSize: 22, fontWeight: 'bold', marginBottom: 12, color: '#111827' },
   row: { padding: 14, borderBottomWidth: 1, borderColor: '#eee' },
+  rowText: { color: '#111827', fontSize: 16 },
 });`,
     solutionCode: `import { View, ScrollView, Text, StyleSheet } from 'react-native';
 
@@ -304,7 +309,7 @@ export default function App() {
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
         {items.map(item => (
           <View key={item.id} style={styles.row} testID={\`row-\${item.id}\`}>
-            <Text>{item.label}</Text>
+            <Text style={styles.rowText}>{item.label}</Text>
           </View>
         ))}
       </ScrollView>
@@ -314,10 +319,11 @@ export default function App() {
 
 const styles = StyleSheet.create({
   outer: { flex: 1, padding: 16, backgroundColor: '#fff' },
-  header: { fontSize: 22, fontWeight: 'bold', marginBottom: 12 },
+  header: { fontSize: 22, fontWeight: 'bold', marginBottom: 12, color: '#111827' },
   scroll: { flex: 1 },
   scrollContent: { paddingBottom: 32 },
   row: { padding: 14, borderBottomWidth: 1, borderColor: '#eee' },
+  rowText: { color: '#111827', fontSize: 16 },
 });`,
     testCases: [
       { id: '4a', description: 'Header renders', type: 'dom_text', selector: 'header', expectedText: 'My List' },
@@ -339,7 +345,7 @@ const styles = StyleSheet.create({
       'Fix useEffect so saved notes load on mount',
       'Save button should still work',
     ],
-    hint: 'What happens when you use an async function directly as a useEffect callback?',
+    hint: 'You defined an async loader inside useEffect — is it actually being called?',
     brokenCode: `import { useState, useEffect } from 'react';
 import { View, TextInput, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -348,9 +354,12 @@ export default function App() {
   const [note, setNote] = useState('');
   const [saved, setSaved] = useState(false);
 
-  useEffect(async () => {
-    const stored = await AsyncStorage.getItem('note');
-    if (stored) setNote(stored);
+  useEffect(() => {
+    async function loadNote() {
+      const stored = await AsyncStorage.getItem('note');
+      if (stored) setNote(stored);
+    }
+    // Bug: loadNote is never invoked, so saved text never appears on mount
   }, []);
 
   const saveNote = async () => {
@@ -369,6 +378,7 @@ export default function App() {
         multiline
         testID="note-input"
         placeholder="Write something..."
+        placeholderTextColor="#9ca3af"
       />
       <TouchableOpacity style={styles.button} onPress={saveNote} testID="save-btn">
         <Text style={styles.btnText}>{saved ? 'Saved!' : 'Save'}</Text>
@@ -379,8 +389,8 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 24, backgroundColor: '#fff' },
-  title: { fontSize: 22, fontWeight: 'bold', marginBottom: 16 },
-  input: { flex: 1, borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12, fontSize: 16, textAlignVertical: 'top' },
+  title: { fontSize: 22, fontWeight: 'bold', marginBottom: 16, color: '#111827' },
+  input: { flex: 1, borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12, fontSize: 16, color: '#111827', textAlignVertical: 'top' },
   button: { marginTop: 12, backgroundColor: '#6200ea', padding: 14, borderRadius: 8, alignItems: 'center' },
   btnText: { color: '#fff', fontWeight: 'bold' },
 });`,
@@ -416,6 +426,7 @@ export default function App() {
         multiline
         testID="note-input"
         placeholder="Write something..."
+        placeholderTextColor="#9ca3af"
       />
       <TouchableOpacity style={styles.button} onPress={saveNote} testID="save-btn">
         <Text style={styles.btnText}>{saved ? 'Saved!' : 'Save'}</Text>
@@ -426,8 +437,8 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 24, backgroundColor: '#fff' },
-  title: { fontSize: 22, fontWeight: 'bold', marginBottom: 16 },
-  input: { flex: 1, borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12, fontSize: 16, textAlignVertical: 'top' },
+  title: { fontSize: 22, fontWeight: 'bold', marginBottom: 16, color: '#111827' },
+  input: { flex: 1, borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12, fontSize: 16, color: '#111827', textAlignVertical: 'top' },
   button: { marginTop: 12, backgroundColor: '#6200ea', padding: 14, borderRadius: 8, alignItems: 'center' },
   btnText: { color: '#fff', fontWeight: 'bold' },
 });`,
@@ -488,7 +499,7 @@ function DetailsScreen({ route }) {
   return (
     <View style={styles.container}>
       <Text testID="detail-name" style={styles.title}>{name}</Text>
-      <Text testID="detail-id">ID: {id}</Text>
+      <Text testID="detail-id" style={styles.bodyText}>ID: {id}</Text>
     </View>
   );
 }
@@ -506,7 +517,8 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff' },
-  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 20 },
+  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 20, color: '#111827' },
+  bodyText: { fontSize: 18, color: '#111827' },
   button: { backgroundColor: '#6200ea', padding: 14, borderRadius: 8 },
   btnText: { color: '#fff', fontWeight: 'bold' },
 });`,
@@ -539,7 +551,7 @@ function DetailsScreen() {
   return (
     <View style={styles.container}>
       <Text testID="detail-name" style={styles.title}>{name}</Text>
-      <Text testID="detail-id">ID: {id}</Text>
+      <Text testID="detail-id" style={styles.bodyText}>ID: {id}</Text>
     </View>
   );
 }
@@ -557,7 +569,8 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff' },
-  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 20 },
+  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 20, color: '#111827' },
+  bodyText: { fontSize: 18, color: '#111827' },
   button: { backgroundColor: '#6200ea', padding: 14, borderRadius: 8 },
   btnText: { color: '#fff', fontWeight: 'bold' },
 });`,
@@ -596,6 +609,13 @@ const styles = StyleSheet.create({
       'Fix KeyboardAvoidingView for iOS',
       'All inputs and submit button should remain accessible',
     ],
+    howToTest: [
+      'In Preview, keep the platform toggle on **iOS** (default for this challenge).',
+      'Tap **Email** or **Password** — a simulated iOS keyboard rises and covers the Sign In button.',
+      'Switch preview to **Android** — the keyboard overlay stays hidden (works as on Android).',
+      'After you add `behavior` + `Platform`, the overlay disappears and a green badge shows KAV is active.',
+      'Optional: open **Snack** → choose iOS in Snack to test on a simulator or device.',
+    ],
     hint: 'What is the correct behavior prop value for KeyboardAvoidingView on iOS vs Android, and how do you detect the platform?',
     brokenCode: `import { View, TextInput, TouchableOpacity, Text, StyleSheet, KeyboardAvoidingView } from 'react-native';
 import { useState } from 'react';
@@ -610,6 +630,7 @@ export default function App() {
       <TextInput
         style={styles.input}
         placeholder="Email"
+        placeholderTextColor="#9ca3af"
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
@@ -618,6 +639,7 @@ export default function App() {
       <TextInput
         style={styles.input}
         placeholder="Password"
+        placeholderTextColor="#9ca3af"
         value={password}
         onChangeText={setPassword}
         secureTextEntry
@@ -632,8 +654,8 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 24, justifyContent: 'center', backgroundColor: '#fff' },
-  title: { fontSize: 28, fontWeight: 'bold', marginBottom: 32, textAlign: 'center' },
-  input: { borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12, fontSize: 16, marginBottom: 12 },
+  title: { fontSize: 28, fontWeight: 'bold', marginBottom: 32, textAlign: 'center', color: '#111827' },
+  input: { borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12, fontSize: 16, marginBottom: 12, color: '#111827' },
   button: { backgroundColor: '#6200ea', padding: 16, borderRadius: 8, alignItems: 'center', marginTop: 8 },
   btnText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
 });`,
@@ -653,6 +675,7 @@ export default function App() {
       <TextInput
         style={styles.input}
         placeholder="Email"
+        placeholderTextColor="#9ca3af"
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
@@ -661,6 +684,7 @@ export default function App() {
       <TextInput
         style={styles.input}
         placeholder="Password"
+        placeholderTextColor="#9ca3af"
         value={password}
         onChangeText={setPassword}
         secureTextEntry
@@ -675,8 +699,8 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 24, justifyContent: 'center', backgroundColor: '#fff' },
-  title: { fontSize: 28, fontWeight: 'bold', marginBottom: 32, textAlign: 'center' },
-  input: { borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12, fontSize: 16, marginBottom: 12 },
+  title: { fontSize: 28, fontWeight: 'bold', marginBottom: 32, textAlign: 'center', color: '#111827' },
+  input: { borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12, fontSize: 16, marginBottom: 12, color: '#111827' },
   button: { backgroundColor: '#6200ea', padding: 16, borderRadius: 8, alignItems: 'center', marginTop: 8 },
   btnText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
 });`,
@@ -724,7 +748,7 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 24, backgroundColor: '#fff' },
-  title: { fontSize: 22, fontWeight: 'bold', marginBottom: 20 },
+  title: { fontSize: 22, fontWeight: 'bold', marginBottom: 20, color: '#111827' },
   overlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'transparent',
@@ -755,7 +779,7 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 24, backgroundColor: '#fff' },
-  title: { fontSize: 22, fontWeight: 'bold', marginBottom: 20 },
+  title: { fontSize: 22, fontWeight: 'bold', marginBottom: 20, color: '#111827' },
   overlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'transparent',
@@ -819,10 +843,10 @@ export default function App() {
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 24, backgroundColor: '#fff', justifyContent: 'center' },
   card: { backgroundColor: '#f3e5f5', borderRadius: 12, padding: 20, marginBottom: 20, alignItems: 'center' },
-  greetText: { fontSize: 22, fontWeight: 'bold', marginBottom: 12 },
+  greetText: { fontSize: 22, fontWeight: 'bold', marginBottom: 12, color: '#111827' },
   greetBtn: { backgroundColor: '#6200ea', padding: 10, borderRadius: 8 },
   greetBtnText: { color: '#fff' },
-  info: { fontSize: 16, marginBottom: 8 },
+  info: { fontSize: 16, marginBottom: 8, color: '#111827' },
   button: { backgroundColor: '#6200ea', padding: 14, borderRadius: 8, alignItems: 'center', marginTop: 12 },
   btnText: { color: '#fff', fontWeight: 'bold' },
 });`,
@@ -861,10 +885,10 @@ export default function App() {
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 24, backgroundColor: '#fff', justifyContent: 'center' },
   card: { backgroundColor: '#f3e5f5', borderRadius: 12, padding: 20, marginBottom: 20, alignItems: 'center' },
-  greetText: { fontSize: 22, fontWeight: 'bold', marginBottom: 12 },
+  greetText: { fontSize: 22, fontWeight: 'bold', marginBottom: 12, color: '#111827' },
   greetBtn: { backgroundColor: '#6200ea', padding: 10, borderRadius: 8 },
   greetBtnText: { color: '#fff' },
-  info: { fontSize: 16, marginBottom: 8 },
+  info: { fontSize: 16, marginBottom: 8, color: '#111827' },
   button: { backgroundColor: '#6200ea', padding: 14, borderRadius: 8, alignItems: 'center', marginTop: 12 },
   btnText: { color: '#fff', fontWeight: 'bold' },
 });`,
@@ -926,10 +950,10 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 24, backgroundColor: '#f5f5f5', justifyContent: 'center' },
-  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 20, textAlign: 'center' },
+  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 20, textAlign: 'center', color: '#111827' },
   card: { backgroundColor: '#fff', borderRadius: 12, padding: 24, alignItems: 'center' },
   cardDark: { backgroundColor: '#1a1a1a' },
-  label: { fontSize: 18, marginBottom: 16 },
+  label: { fontSize: 18, marginBottom: 16, color: '#111827' },
   labelDark: { color: '#fff' },
   button: { backgroundColor: '#6200ea', padding: 12, borderRadius: 8 },
   btnText: { color: '#fff', fontWeight: 'bold' },
@@ -971,10 +995,10 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 24, backgroundColor: '#f5f5f5', justifyContent: 'center' },
-  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 20, textAlign: 'center' },
+  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 20, textAlign: 'center', color: '#111827' },
   card: { backgroundColor: '#fff', borderRadius: 12, padding: 24, alignItems: 'center' },
   cardDark: { backgroundColor: '#1a1a1a' },
-  label: { fontSize: 18, marginBottom: 16 },
+  label: { fontSize: 18, marginBottom: 16, color: '#111827' },
   labelDark: { color: '#fff' },
   button: { backgroundColor: '#6200ea', padding: 12, borderRadius: 8 },
   btnText: { color: '#fff', fontWeight: 'bold' },

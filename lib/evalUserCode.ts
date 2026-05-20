@@ -10,6 +10,7 @@ import React, {
   createContext,
 } from 'react'
 import * as RN from 'react-native'
+import { createPlatformMock, type PreviewPlatformOS } from './previewPlatform'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
@@ -47,8 +48,18 @@ function transpileJsx(code: string): string {
   }
 }
 
-export function evalUserCode(code: string): React.ComponentType {
+export type EvalUserCodeOptions = {
+  /** Override Platform.OS in the preview sandbox (web | ios | android). */
+  platformOS?: PreviewPlatformOS
+}
+
+export function evalUserCode(
+  code: string,
+  options: EvalUserCodeOptions = {}
+): React.ComponentType {
   const body = transpileJsx(code)
+  const Platform =
+    options.platformOS != null ? createPlatformMock(options.platformOS) : RN.Platform
 
   const fn = new Function(
     'React',
@@ -99,7 +110,7 @@ export function evalUserCode(code: string): React.ComponentType {
     RN.FlatList,
     RN.StyleSheet,
     RN.KeyboardAvoidingView,
-    RN.Platform,
+    Platform,
     AsyncStorage,
     NavigationContainer,
     createNativeStackNavigator,

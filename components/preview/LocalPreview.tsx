@@ -4,11 +4,16 @@ import { useEffect, useRef, useState } from 'react'
 import { createElement } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import { View } from 'react-native'
+import type { PreviewPlatformOS } from '@/lib/previewPlatform'
 import { cn } from '@/lib/cn'
+import { PreviewErrorBoundary } from './PreviewErrorBoundary'
+import { KeyboardSimulator } from './KeyboardSimulator'
 
 interface LocalPreviewProps {
   code: string
   refreshKey: number
+  platformOS?: PreviewPlatformOS
+  simulateKeyboard?: boolean
 }
 
 function PreviewShell({ children }: { children: React.ReactNode }) {
@@ -26,47 +31,124 @@ function PreviewShell({ children }: { children: React.ReactNode }) {
   )
 }
 
-export function LocalPreview({ code, refreshKey }: LocalPreviewProps) {
+function deferUnmount(root: Root | null) {
+  if (!root) return
+  queueMicrotask(() => {
+    try {
+      root.unmount()
+    } catch {
+      // Root may already be unmounted during navigation/HMR
+    }
+  })
+}
+
+function codeUsesKeyboardAvoidingBehavior(source: string): boolean {
+  return /behavior\s*=/.test(source)
+}
+
+export function LocalPreview({
+  code,
+  refreshKey,
+  platformOS = 'web',
+  simulateKeyboard = false,
+}: LocalPreviewProps) {
+  const frameRef = useRef<HTMLDivElement>(null)
   const mountRef = useRef<HTMLDivElement>(null)
   const rootRef = useRef<Root | null>(null)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const runIdRef = useRef(0)
   const [status, setStatus] = useState<'loading' | 'running' | 'error'>('loading')
   const [error, setError] = useState<string | null>(null)
+  const [keyboardFocused, setKeyboardFocused] = useState(false)
+
+  const keyboardFixApplied = codeUsesKeyboardAvoidingBehavior(code)
+  const showIosKeyboard =
+    simulateKeyboard && !keyboardFixApplied && keyboardFocused
 
   useEffect(() => {
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current)
-      rootRef.current?.unmount()
+      const root = rootRef.current
       rootRef.current = null
+      deferUnmount(root)
     }
   }, [])
 
   useEffect(() => {
+    setKeyboardFocused(false)
+  }, [code, refreshKey, simulateKeyboard])
+
+  useEffect(() => {
+    if (!simulateKeyboard || !frameRef.current) return
+
+    const frame = frameRef.current
+
+    const onFocusIn = (event: FocusEvent) => {
+      const target = event.target
+      if (
+        target instanceof HTMLInputElement ||
+        target instanceof HTMLTextAreaElement
+      ) {
+        setKeyboardFocused(true)
+      }
+    }
+
+    const onFocusOut = () => {
+      window.setTimeout(() => {
+        if (!frame.contains(document.activeElement)) {
+          setKeyboardFocused(false)
+        }
+      }, 80)
+    }
+
+    frame.addEventListener('focusin', onFocusIn)
+    frame.addEventListener('focusout', onFocusOut)
+    return () => {
+      frame.removeEventListener('focusin', onFocusIn)
+      frame.removeEventListener('focusout', onFocusOut)
+    }
+  }, [simulateKeyboard, refreshKey])
+
+  useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current)
 
+    const runId = ++runIdRef.current
+
     const run = async () => {
-      if (!mountRef.current) return
+      if (!mountRef.current || runId !== runIdRef.current) return
       setStatus('loading')
       setError(null)
 
       try {
         const { evalUserCode } = await import('@/lib/evalUserCode')
-        const Component = evalUserCode(code)
+        const Component = evalUserCode(code, { platformOS })
+
+        if (runId !== runIdRef.current || !mountRef.current) return
 
         if (!rootRef.current) {
           rootRef.current = createRoot(mountRef.current)
         }
 
-        rootRef.current.render(
-          createElement(PreviewShell, null, createElement(Component))
+        const previewTree = createElement(
+          PreviewShell,
+          null,
+          createElement(Component)
         )
-        setStatus('running')
+        rootRef.current.render(
+          createElement(PreviewErrorBoundary, { key: String(runId), children: previewTree })
+        )
+
+        if (runId === runIdRef.current) {
+          setStatus('running')
+        }
       } catch (err) {
+        if (runId !== runIdRef.current) return
         const message = err instanceof Error ? err.message : 'Failed to render preview'
         setError(message)
         setStatus('error')
-        rootRef.current?.unmount()
+        const root = rootRef.current
         rootRef.current = null
+        deferUnmount(root)
         if (mountRef.current) {
           mountRef.current.innerHTML = `<pre style="padding:16px;color:#b91c1c;font:12px/1.4 monospace;white-space:pre-wrap">${message}</pre>`
         }
@@ -77,12 +159,23 @@ export function LocalPreview({ code, refreshKey }: LocalPreviewProps) {
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current)
     }
-  }, [code, refreshKey])
+  }, [code, refreshKey, platformOS])
 
   return (
-    <div className="relative h-full min-h-0 flex-1 bg-zinc-900">
-      <div className="mx-auto h-full w-full max-w-[420px] overflow-hidden border-x border-zinc-800 bg-white shadow-inner">
-        <div ref={mountRef} className="h-full w-full overflow-auto" />
+    <div className="relative h-full min-h-0 w-full bg-zinc-900">
+      <div
+        ref={frameRef}
+        className="relative mx-auto h-full w-full max-w-[420px] overflow-hidden border-x border-zinc-800 bg-white shadow-inner"
+      >
+        <div ref={mountRef} className="h-full w-full overflow-hidden overscroll-none" />
+        <KeyboardSimulator visible={showIosKeyboard} />
+        {simulateKeyboard && keyboardFixApplied && status === 'running' && (
+          <div className="pointer-events-none absolute inset-x-0 bottom-2 z-10 flex justify-center">
+            <span className="rounded-full bg-teal-600/90 px-2 py-0.5 text-[10px] text-white">
+              KeyboardAvoidingView active
+            </span>
+          </div>
+        )}
       </div>
       <div
         className={cn(

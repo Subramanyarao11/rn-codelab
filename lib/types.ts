@@ -55,6 +55,8 @@ export interface ProblemDefinition {
   symptoms: string[]
   yourTask: string[]
   hint: string
+  /** Optional steps for reproducing the bug in preview / on device */
+  howToTest?: string[]
   brokenCode: string
   solutionCode: string
   testCases: Omit<TestCase, 'status'>[]
