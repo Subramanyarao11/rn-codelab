@@ -5,11 +5,9 @@ import type { EditorThemeId } from './types'
 
 let configured = false
 
-const webpackModule = module as NodeModule & {
-  hot?: { dispose: (cb: () => void) => void }
-}
-if (webpackModule.hot) {
-  webpackModule.hot.dispose(() => {
+// Turbopack / Next dev HMR — must not reference CommonJS `module` (undefined in the browser)
+if (import.meta.hot) {
+  import.meta.hot.dispose(() => {
     configured = false
   })
 }
