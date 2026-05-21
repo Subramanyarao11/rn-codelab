@@ -13,6 +13,19 @@ Open [http://localhost:3000](http://localhost:3000) for the challenge grid, or j
 
 **Desktop only** — the workspace layout requires a viewport width of at least 1024px.
 
+## Contribute
+
+RN Debug Labs is open source. You can propose new challenges two ways:
+
+| Path | Best for |
+|------|----------|
+| **[Submit form](/contribute/submit)** | Quick proposals — opens a GitHub issue for review |
+| **[Pull request](CONTRIBUTING.md)** | Add `lib/community-problems/` directly |
+
+Accepted submissions are credited on the challenge page. See [CONTRIBUTING.md](./CONTRIBUTING.md).
+
+Optional: set `GITHUB_TOKEN` + `GITHUB_REPO` (see [.env.example](./.env.example)) so the form creates issues via API instead of opening a new tab.
+
 ## Features
 
 - **10 RN debugging challenges** — FlatList, TextInput, flexbox, ScrollView, AsyncStorage, Navigation, KeyboardAvoidingView, pointer events, `useCallback`, Context API
@@ -46,11 +59,20 @@ Open [http://localhost:3000](http://localhost:3000) for the challenge grid, or j
 ```
 app/                 # Routes (home + /problems/[id])
 components/          # Workspace UI (editor, preview, tests, layout)
-lib/problems.ts      # Challenge definitions, starter code, solutions, tests
+lib/problems.ts      # Core challenges (1–10)
+lib/community-problems/  # Accepted community submissions (merged at build)
 lib/                 # Store, eval sandbox, Monaco setup, themes
 hooks/               # Client hooks (e.g. store hydration)
 ```
 
+## Environment
+
+| Variable | Purpose |
+|----------|---------|
+| `NEXT_PUBLIC_GITHUB_REPO` | Repo slug for contribute/issue links (default `Subramanyarao11/rn-codelab`) |
+| `GITHUB_TOKEN` | Optional PAT for `/api/submit-problem` |
+| `GITHUB_REPO` | Same as above for the API route server-side |
+
 ## License
 
-Private / internal use — see repository owner for terms.
+[MIT](./LICENSE) — contributions welcome.

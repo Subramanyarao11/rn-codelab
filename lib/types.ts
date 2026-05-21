@@ -1,5 +1,13 @@
 export type Difficulty = 'beginner' | 'intermediate' | 'advanced'
 
+export type ProblemOrigin = 'core' | 'community'
+
+export interface ProblemContributor {
+  name: string
+  github?: string
+  url?: string
+}
+
 export type TestStatus = 'pending' | 'pass' | 'fail' | 'running'
 
 export type TestType = 'dom_text' | 'dom_exists' | 'interaction' | 'no_crash'
@@ -60,6 +68,9 @@ export interface ProblemDefinition {
   brokenCode: string
   solutionCode: string
   testCases: Omit<TestCase, 'status'>[]
+  /** Shown when a community member's submission is accepted */
+  contributor?: ProblemContributor
+  origin?: ProblemOrigin
 }
 
 export interface ProblemProgress {

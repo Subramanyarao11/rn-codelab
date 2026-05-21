@@ -3,6 +3,7 @@
 import type { ProblemDefinition } from '@/lib/types'
 import { TagBadge } from './TagBadge'
 import { HintBox } from './HintBox'
+import { ContributorCredit } from './ContributorCredit'
 
 interface ProblemPanelProps {
   problem: ProblemDefinition
@@ -21,6 +22,10 @@ export function ProblemPanel({ problem, showHint }: ProblemPanelProps) {
       <h2 className="mb-3 text-base font-bold text-amber-400">
         Fix the Bug: {problem.title}
       </h2>
+
+      {problem.contributor && (
+        <ContributorCredit contributor={problem.contributor} origin={problem.origin} />
+      )}
 
       <div className="mb-4 rounded-md border border-red-500/25 bg-red-950/30 px-3 py-2.5">
         <p className="mb-1 text-[10px] font-bold uppercase tracking-wider text-red-400/90">

@@ -1,0 +1,110 @@
+name: Problem submission
+description: Propose a new Fix-the-Bug challenge (no PR required)
+title: "[Problem] "
+labels:
+  - problem-submission
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for contributing to RN Debug Labs! Prefer the [web form](https://github.com/Subramanyarao11/rn-codelab#contribute) for long code blocks — or fill in the fields below.
+
+  - type: input
+    id: contributor_name
+    attributes:
+      label: Your name
+      description: Shown on the challenge page if we accept your submission
+    validations:
+      required: true
+
+  - type: input
+    id: contributor_github
+    attributes:
+      label: GitHub username
+      description: Optional — linked from the challenge credit
+
+  - type: input
+    id: title
+    attributes:
+      label: Challenge title
+    validations:
+      required: true
+
+  - type: input
+    id: subtitle
+    attributes:
+      label: Subtitle (one line)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: difficulty
+    attributes:
+      label: Difficulty
+      options:
+        - beginner
+        - intermediate
+        - advanced
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug report
+    validations:
+      required: true
+
+  - type: textarea
+    id: symptoms
+    attributes:
+      label: Symptoms (one per line)
+    validations:
+      required: true
+
+  - type: textarea
+    id: tasks
+    attributes:
+      label: Learner tasks (one per line)
+    validations:
+      required: true
+
+  - type: textarea
+    id: hint
+    attributes:
+      label: Hint
+    validations:
+      required: true
+
+  - type: textarea
+    id: broken_code
+    attributes:
+      label: Broken starter code (TSX)
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution_code
+    attributes:
+      label: Solution code (TSX)
+    validations:
+      required: true
+
+  - type: textarea
+    id: test_notes
+    attributes:
+      label: What should automated tests verify?
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Contributor checklist
+      options:
+        - label: Broken code fails the tests I described (or similar)
+          required: true
+        - label: Solution passes those tests
+          required: true
+        - label: I am okay with my name being credited if accepted
+          required: true

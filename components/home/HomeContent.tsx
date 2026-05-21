@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Bug, Check, ChevronRight } from 'lucide-react'
+import { Bug, Check, ChevronRight, GitPullRequest, Sparkles } from 'lucide-react'
 import { PROBLEMS, TOTAL_PROBLEMS } from '@/lib/problems'
 import { useStore } from '@/lib/store'
 import { cn } from '@/lib/cn'
@@ -32,12 +32,20 @@ export function HomeContent() {
               <p className="text-xs text-zinc-500">React Native bug-fixing challenges</p>
             </div>
           </div>
-          <div className="flex items-center gap-3 rounded-lg border border-zinc-800 bg-zinc-900/50 px-4 py-2">
-            <span className="text-xs text-zinc-500">Progress</span>
-            <span className="text-sm font-bold tabular-nums text-amber-400">
-              {completedCount}
-              <span className="font-normal text-zinc-600"> / {TOTAL_PROBLEMS}</span>
-            </span>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/contribute"
+              className="hidden h-8 items-center rounded-lg border border-teal-500/30 bg-teal-500/10 px-3 text-xs font-medium text-teal-300 transition-colors hover:border-teal-500/50 hover:bg-teal-500/15 sm:inline-flex"
+            >
+              Contribute
+            </Link>
+            <div className="flex items-center gap-3 rounded-lg border border-zinc-800 bg-zinc-900/50 px-4 py-2">
+              <span className="text-xs text-zinc-500">Progress</span>
+              <span className="text-sm font-bold tabular-nums text-amber-400">
+                {completedCount}
+                <span className="font-normal text-zinc-600"> / {TOTAL_PROBLEMS}</span>
+              </span>
+            </div>
           </div>
         </div>
       </motion.header>
@@ -89,8 +97,51 @@ export function HomeContent() {
           </div>
         </motion.div>
 
+        <motion.section
+          className="relative mb-10 overflow-hidden rounded-2xl border border-teal-500/25 bg-gradient-to-br from-teal-950/40 via-zinc-900/80 to-zinc-900/60 p-6 sm:p-8"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.12, duration: 0.35 }}
+        >
+          <div className="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full bg-teal-500/10 blur-2xl" />
+          <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+            <div className="max-w-xl">
+              <div className="mb-2 flex items-center gap-2 text-teal-400">
+                <Sparkles className="h-4 w-4" />
+                <span className="text-[10px] font-bold uppercase tracking-[0.18em]">
+                  Open source
+                </span>
+              </div>
+              <h2 className="mb-2 text-xl font-bold text-zinc-50">
+                Got a real RN bug worth teaching?
+              </h2>
+              <p className="text-sm leading-relaxed text-zinc-400">
+                Submit a challenge — no git required. We review every proposal and credit accepted
+                authors on the challenge page.
+              </p>
+            </div>
+            <div className="w-full rounded-xl border border-teal-500/15 bg-zinc-950/50 p-4 sm:w-auto sm:min-w-[240px]">
+              <Link
+                href="/contribute/submit"
+                className="flex h-9 w-full items-center justify-center gap-2 rounded-lg bg-teal-500 px-4 text-sm font-semibold text-zinc-950 transition-colors hover:bg-teal-400"
+              >
+                Submit a challenge
+                <ChevronRight className="h-4 w-4 shrink-0" />
+              </Link>
+              <div className="my-3 border-t border-zinc-800/80" />
+              <Link
+                href="/contribute"
+                className="flex w-full items-center justify-center gap-1.5 text-xs text-zinc-500 transition-colors hover:text-teal-300"
+              >
+                <GitPullRequest className="h-3.5 w-3.5 shrink-0" />
+                Or open a pull request
+              </Link>
+            </div>
+          </div>
+        </motion.section>
+
         <motion.div
-          className="grid gap-4 sm:grid-cols-2"
+          className="grid gap-4 sm:grid-cols-2 sm:items-stretch"
           variants={staggerContainer}
           initial="initial"
           animate="animate"
@@ -99,17 +150,17 @@ export function HomeContent() {
             const isComplete = progress[problem.id]?.completed
 
             return (
-              <motion.div key={problem.id} variants={staggerItem}>
+              <motion.div key={problem.id} variants={staggerItem} className="min-w-0">
                 <Link
                   href={`/problems/${problem.id}`}
                   className={cn(
-                    'group relative block rounded-xl border bg-zinc-900/60 p-5 transition-colors',
+                    'group relative flex h-full min-h-[168px] flex-col rounded-xl border bg-zinc-900/60 p-5 transition-colors',
                     isComplete
                       ? 'border-green-500/20 hover:border-green-500/40'
                       : 'border-zinc-800 hover:border-amber-500/30 hover:bg-zinc-900'
                   )}
                 >
-                  <div className="mb-3 flex items-start justify-between">
+                  <div className="mb-3 flex shrink-0 items-start justify-between gap-3">
                     {isComplete ? (
                       <span className="flex h-7 w-7 items-center justify-center rounded-full bg-green-500/15 ring-1 ring-green-500/30">
                         <Check className="h-3.5 w-3.5 text-green-400" strokeWidth={3} />
@@ -131,12 +182,14 @@ export function HomeContent() {
                     </span>
                   </div>
 
-                  <h2 className="mb-1 font-semibold text-zinc-50 group-hover:text-amber-100">
+                  <h2 className="mb-1 shrink-0 font-semibold text-zinc-50 group-hover:text-amber-100">
                     {problem.title}
                   </h2>
-                  <p className="mb-4 text-sm leading-snug text-zinc-500">{problem.subtitle}</p>
+                  <p className="mb-4 min-h-[2.5rem] flex-1 text-sm leading-snug text-zinc-500">
+                    {problem.subtitle}
+                  </p>
 
-                  <div className="flex flex-wrap gap-1.5">
+                  <div className="mt-auto flex flex-wrap gap-1.5">
                     {problem.tags.slice(0, 3).map((tag) => (
                       <span
                         key={tag}

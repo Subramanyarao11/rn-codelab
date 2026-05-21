@@ -1,6 +1,7 @@
 import type { ProblemDefinition } from './types'
+import { COMMUNITY_PROBLEMS } from './community-problems'
 
-export const PROBLEMS: ProblemDefinition[] = [
+const CORE_PROBLEMS: ProblemDefinition[] = [
   {
     id: 1,
     slug: 'frozen-flatlist',
@@ -1011,6 +1012,8 @@ const styles = StyleSheet.create({
     ],
   },
 ]
+
+export const PROBLEMS: ProblemDefinition[] = [...CORE_PROBLEMS, ...COMMUNITY_PROBLEMS]
 
 export function getProblem(id: number): ProblemDefinition | undefined {
   return PROBLEMS.find((p) => p.id === id)

@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Submit a challenge (web form)
+    url: https://github.com/Subramanyarao11/rn-codelab#contribute
+    about: Use the in-app form or open a problem submission issue
