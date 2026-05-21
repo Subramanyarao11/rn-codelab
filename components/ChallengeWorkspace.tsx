@@ -16,6 +16,7 @@ import { EditorToolbar } from '@/components/editor/EditorToolbar'
 import { WorkspaceTour } from '@/components/onboarding/WorkspaceTour'
 import { useStoreHydrated } from '@/hooks/useStoreHydrated'
 import { useStore } from '@/lib/store'
+import { analytics } from '@/lib/analytics'
 import { shouldSimulateIosKeyboard, type PreviewPlatformOS } from '@/lib/previewPlatform'
 import {
   hasCrashyAsyncEffect,
@@ -130,6 +131,7 @@ export function ChallengeWorkspace({ problem }: ChallengeWorkspaceProps) {
   )
 
   const handleReset = () => {
+    analytics.codeReset(problem.id)
     resetProblem(problem.id)
     showingSolutionRef.current = false
     setShowingSolution(false)
@@ -150,6 +152,7 @@ export function ChallengeWorkspace({ problem }: ChallengeWorkspaceProps) {
       setWorkspaceCode(restored, { persist: false })
     } else {
       markSolutionViewed(problem.id)
+      analytics.solutionViewed(problem.id)
       codeBeforeSolutionRef.current = code
       showingSolutionRef.current = true
       setShowingSolution(true)
@@ -159,11 +162,13 @@ export function ChallengeWorkspace({ problem }: ChallengeWorkspaceProps) {
   }
 
   const handleRun = () => {
+    analytics.previewRun(problem.id)
     setRunKey((k) => k + 1)
   }
 
   const handleOpenSnack = () => {
     const snackPlatform = problem.id === 7 ? previewPlatform : 'web'
+    analytics.snackOpened(problem.id, snackPlatform)
     window.open(buildSnackUrl(code, snackPlatform), '_blank', 'noopener,noreferrer')
   }
 
@@ -175,11 +180,19 @@ export function ChallengeWorkspace({ problem }: ChallengeWorkspaceProps) {
         <TopBar
           problem={problem}
           showHint={showHint}
-          onToggleHint={() => setShowHint((h) => !h)}
+          onToggleHint={() =>
+            setShowHint((visible) => {
+              analytics.hintToggled(problem.id, !visible)
+              return !visible
+            })
+          }
           onReset={handleReset}
           onShowSolution={handleShowSolution}
           showingSolution={showingSolution}
-          onShowTour={() => setTourOpen(true)}
+          onShowTour={() => {
+            analytics.tourReopened()
+            setTourOpen(true)
+          }}
         />
 
         <AnimatePresence>

@@ -13,6 +13,7 @@ import {
 } from '@/lib/submission'
 import { SUBMISSION_LIMITS } from '@/lib/codeSandbox'
 import { Button } from '@/components/ui/Button'
+import { analytics } from '@/lib/analytics'
 import { cn } from '@/lib/cn'
 
 function Field({
@@ -60,6 +61,7 @@ export function SubmitProblemForm() {
   }
 
   const openGithubIssueFallback = (data: ProblemSubmission) => {
+    analytics.submissionSent('github_fallback', data.difficulty)
     const title = buildSubmissionIssueTitle(data)
     const body = buildSubmissionIssueBody(data)
     const url = githubIssueNewUrl({ title, body, labels: ['problem-submission'] })
@@ -94,6 +96,7 @@ export function SubmitProblemForm() {
       }
 
       if (res.ok && data.issueUrl) {
+        analytics.submissionSent('api', form.difficulty)
         setStatus('success')
         setIssueUrl(data.issueUrl)
         return

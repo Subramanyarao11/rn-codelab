@@ -145,7 +145,7 @@ export function HomeContent() {
             <div className="w-full rounded-xl border border-teal-500/15 bg-app-surface/80 p-4 dark:bg-app-bg/50 sm:w-auto sm:min-w-[240px]">
               <Link
                 href="/contribute/submit"
-                className="flex h-9 w-full items-center justify-center gap-2 rounded-lg bg-teal-500 px-4 text-sm font-semibold text-zinc-950 transition-colors hover:bg-teal-400"
+                className="flex h-9 w-full items-center justify-center gap-2 rounded-lg bg-teal-500 px-4 text-sm font-semibold text-white transition-colors hover:bg-teal-400"
               >
                 Submit a challenge
                 <ChevronRight className="h-4 w-4 shrink-0" />

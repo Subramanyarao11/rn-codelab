@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { Moon, Sun } from 'lucide-react'
 import { useTheme } from 'next-themes'
+import { analytics } from '@/lib/analytics'
 import { cn } from '@/lib/cn'
 
 interface ThemeToggleProps {
@@ -24,7 +25,11 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
   return (
     <button
       type="button"
-      onClick={() => setTheme(isDark ? 'light' : 'dark')}
+      onClick={() => {
+        const next = isDark ? 'light' : 'dark'
+        analytics.themeChanged(next)
+        setTheme(next)
+      }}
       title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
       aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
       className={cn(

@@ -9,6 +9,7 @@ import { ConfettiBurst } from '@/components/motion/ConfettiBurst'
 import { TestCaseRow } from './TestCase'
 import { runTests } from './useTestRunner'
 import { useStore } from '@/lib/store'
+import { analytics } from '@/lib/analytics'
 import { cn } from '@/lib/cn'
 import { fadeInUp, scaleIn } from '@/lib/motion'
 
@@ -52,11 +53,17 @@ export function TestPanel({ problem, code, showingSolution = false }: TestPanelP
       }
 
       const passed = results.every((r) => r.status === 'pass')
+      const passCount = results.filter((r) => r.status === 'pass').length
+      analytics.testsChecked(problem.id, passed, passCount, results.length)
+
       if (passed) {
         setAllPassed(true)
         if (!showingSolution) {
           markComplete(problem.id)
+          analytics.challengeComplete(problem.id)
           setConfetti(true)
+        } else {
+          analytics.solutionVerified(problem.id)
         }
       }
     } catch (err) {

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
+import { Analytics } from '@vercel/analytics/next'
 import { DesktopGate } from '@/components/layout/DesktopGate'
 import { ThemeProvider } from '@/components/theme/ThemeProvider'
 import './globals.css'
@@ -22,6 +23,7 @@ export default function RootLayout({
         <ThemeProvider>
           <DesktopGate>{children}</DesktopGate>
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   )

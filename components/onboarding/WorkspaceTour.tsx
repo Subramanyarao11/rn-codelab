@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight, Sparkles, X } from 'lucide-react'
 import { WORKSPACE_TOUR_STEPS, type TourStep } from '@/lib/onboarding'
+import { analytics } from '@/lib/analytics'
 import { cn } from '@/lib/cn'
 
 const CARD_WIDTH = 300
@@ -334,10 +335,16 @@ export function WorkspaceTour({ open, onComplete, onSkip }: WorkspaceTourProps) 
 
   const handleNext = () => {
     if (isLast) {
+      analytics.tourCompleted(WORKSPACE_TOUR_STEPS.length)
       onComplete()
       return
     }
     setStepIndex((i) => i + 1)
+  }
+
+  const handleSkip = () => {
+    analytics.tourSkipped(stepIndex + 1, WORKSPACE_TOUR_STEPS.length)
+    onSkip()
   }
 
   const handleBack = () => setStepIndex((i) => Math.max(0, i - 1))
@@ -380,7 +387,7 @@ export function WorkspaceTour({ open, onComplete, onSkip }: WorkspaceTourProps) 
           >
             <button
               type="button"
-              onClick={onSkip}
+              onClick={handleSkip}
               className="absolute right-2 top-2 rounded-md p-1 text-app-fg-subtle transition-colors hover:bg-app-hover hover:text-app-fg-secondary"
               aria-label="Close tour"
             >
@@ -398,7 +405,7 @@ export function WorkspaceTour({ open, onComplete, onSkip }: WorkspaceTourProps) 
             <div className="flex items-center justify-between gap-2">
               <button
                 type="button"
-                onClick={onSkip}
+                onClick={handleSkip}
                 className="text-xs text-app-fg-subtle transition-colors hover:text-app-fg-secondary"
               >
                 Skip tour
