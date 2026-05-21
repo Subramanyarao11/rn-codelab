@@ -43,7 +43,7 @@ export class PreviewErrorBoundary extends Component<
           <pre className="mt-2 whitespace-pre-wrap font-mono text-xs text-red-300/90">
             {this.state.error}
           </pre>
-          {hint && <p className="mt-3 text-xs text-zinc-500">{hint}</p>}
+          {hint && <p className="mt-3 text-xs text-app-fg-subtle">{hint}</p>}
         </div>
       )
     }

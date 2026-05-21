@@ -24,7 +24,7 @@ export function TestCaseRow({ test }: TestCaseRowProps) {
         transition={{ type: 'spring', stiffness: 420, damping: 22 }}
         className="mt-0.5 w-4 shrink-0 text-center"
       >
-        {test.status === 'pending' && <span className="text-zinc-600">○</span>}
+        {test.status === 'pending' && <span className="text-app-fg-subtle">○</span>}
         {test.status === 'running' && (
           <Loader2 className="inline h-3.5 w-3.5 animate-spin text-amber-400" />
         )}
@@ -34,10 +34,10 @@ export function TestCaseRow({ test }: TestCaseRowProps) {
       <span
         className={cn(
           'transition-colors duration-200',
-          test.status === 'pass' && 'text-green-300',
-          test.status === 'fail' && 'text-red-300',
-          test.status === 'pending' && 'text-zinc-400',
-          test.status === 'running' && 'text-zinc-300'
+          test.status === 'pass' && 'text-green-600 dark:text-green-300',
+          test.status === 'fail' && 'text-red-600 dark:text-red-300',
+          test.status === 'pending' && 'text-app-fg-muted',
+          test.status === 'running' && 'text-app-fg-secondary'
         )}
       >
         {test.description}

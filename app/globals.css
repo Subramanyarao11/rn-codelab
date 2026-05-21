@@ -3,8 +3,63 @@
 @tailwind utilities;
 
 :root {
+  --background: #fafafa;
+  --foreground: #18181b;
+  --app-bg: #fafafa;
+  --app-fg: #18181b;
+  --app-fg-secondary: #3f3f46;
+  --app-fg-muted: #52525b;
+  --app-fg-subtle: #71717a;
+  --app-surface: #ffffff;
+  --app-surface-elevated: #f4f4f5;
+  --app-surface-muted: #f4f4f5;
+  --app-card: rgba(255, 255, 255, 0.85);
+  --app-border: #e4e4e7;
+  --app-border-subtle: #f4f4f5;
+  --app-header: rgba(255, 255, 255, 0.92);
+  --app-sidebar: #fafafa;
+  --app-hover: rgba(244, 244, 245, 0.95);
+  --app-hover-strong: #e4e4e7;
+  --app-input-bg: rgba(244, 244, 245, 0.9);
+  --app-input-border: #d4d4d8;
+  --app-control-bg: #f4f4f5;
+  --app-control-hover: #e4e4e7;
+  --app-progress-track: #e4e4e7;
+  --app-editor-loading: #fafafa;
+  --app-overlay: rgba(9, 9, 11, 0.45);
+  --app-tour-card: #ffffff;
+  --app-tour-shadow: rgba(0, 0, 0, 0.12);
+  --app-tour-arrow: rgb(228 228 231);
+}
+
+.dark {
   --background: #09090b;
   --foreground: #fafafa;
+  --app-bg: #09090b;
+  --app-fg: #fafafa;
+  --app-fg-secondary: #d4d4d8;
+  --app-fg-muted: #a1a1aa;
+  --app-fg-subtle: #71717a;
+  --app-surface: #18181b;
+  --app-surface-elevated: rgba(39, 39, 42, 0.45);
+  --app-surface-muted: rgba(24, 24, 27, 0.55);
+  --app-card: rgba(24, 24, 27, 0.65);
+  --app-border: rgba(39, 39, 42, 0.92);
+  --app-border-subtle: rgba(39, 39, 42, 0.82);
+  --app-header: rgba(12, 12, 14, 0.82);
+  --app-sidebar: #0c0c0e;
+  --app-hover: rgba(39, 39, 42, 0.62);
+  --app-hover-strong: #27272a;
+  --app-input-bg: rgba(24, 24, 27, 0.82);
+  --app-input-border: #3f3f46;
+  --app-control-bg: #18181b;
+  --app-control-hover: #27272a;
+  --app-progress-track: #27272a;
+  --app-editor-loading: #1e1e1e;
+  --app-overlay: rgba(9, 9, 11, 0.82);
+  --app-tour-card: #18181b;
+  --app-tour-shadow: rgba(0, 0, 0, 0.55);
+  --app-tour-arrow: rgb(39 39 42);
 }
 
 body {

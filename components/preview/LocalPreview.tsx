@@ -162,10 +162,10 @@ export function LocalPreview({
   }, [code, refreshKey, platformOS])
 
   return (
-    <div className="relative h-full min-h-0 w-full bg-zinc-900">
+    <div className="relative h-full min-h-0 w-full bg-app-surface">
       <div
         ref={frameRef}
-        className="relative mx-auto h-full w-full max-w-[420px] overflow-hidden border-x border-zinc-800 bg-white shadow-inner"
+        className="relative mx-auto h-full w-full max-w-[420px] overflow-hidden border-x border-app-border bg-white shadow-inner"
       >
         <div ref={mountRef} className="h-full w-full overflow-hidden overscroll-none" />
         <KeyboardSimulator visible={showIosKeyboard} />
@@ -180,16 +180,16 @@ export function LocalPreview({
       <div
         className={cn(
           'absolute right-3 top-3 flex items-center gap-1.5 rounded-full px-2 py-1 text-xs',
-          status === 'running' && 'bg-zinc-800/90 text-teal-400',
-          status === 'loading' && 'bg-zinc-800/90 text-zinc-500',
-          status === 'error' && 'bg-zinc-800/90 text-red-400'
+          status === 'running' && 'bg-app-control text-teal-600 dark:text-teal-400',
+          status === 'loading' && 'bg-app-control text-app-fg-subtle',
+          status === 'error' && 'bg-app-control text-red-500 dark:text-red-400'
         )}
       >
         <span
           className={cn(
             'h-2 w-2 rounded-full',
             status === 'running' && 'bg-teal-400',
-            status === 'loading' && 'animate-pulse bg-zinc-500',
+            status === 'loading' && 'animate-pulse bg-app-fg-subtle',
             status === 'error' && 'bg-red-400'
           )}
         />

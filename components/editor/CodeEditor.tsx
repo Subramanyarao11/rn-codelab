@@ -56,7 +56,7 @@ export default function CodeEditor({ value, onChange, readOnly = false }: CodeEd
         onMount={handleMount}
         options={buildEditorOptions(editorSettings, readOnly)}
         loading={
-          <div className="flex h-full items-center justify-center text-sm text-zinc-500">
+          <div className="flex h-full items-center justify-center text-sm text-app-fg-subtle">
             Loading editor…
           </div>
         }

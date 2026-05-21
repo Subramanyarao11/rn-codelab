@@ -19,7 +19,7 @@ export function ProblemPanel({ problem, showHint }: ProblemPanelProps) {
         ))}
       </div>
 
-      <h2 className="mb-3 text-base font-bold text-amber-400">
+      <h2 className="mb-3 text-base font-bold text-amber-600 dark:text-amber-400">
         Fix the Bug: {problem.title}
       </h2>
 
@@ -27,21 +27,21 @@ export function ProblemPanel({ problem, showHint }: ProblemPanelProps) {
         <ContributorCredit contributor={problem.contributor} origin={problem.origin} />
       )}
 
-      <div className="mb-4 rounded-md border border-red-500/25 bg-red-950/30 px-3 py-2.5">
-        <p className="mb-1 text-[10px] font-bold uppercase tracking-wider text-red-400/90">
+      <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-3 py-2.5 dark:border-red-500/25 dark:bg-red-950/30">
+        <p className="mb-1 text-[10px] font-bold uppercase tracking-wider text-red-600 dark:text-red-400/90">
           Bug report
         </p>
-        <p className="text-sm leading-relaxed text-zinc-300">{problem.description}</p>
+        <p className="text-sm leading-relaxed text-app-fg-secondary">{problem.description}</p>
       </div>
 
       <div className="mb-4">
-        <h3 className="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-zinc-500">
+        <h3 className="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-app-fg-subtle">
           Symptoms
         </h3>
-        <ul className="space-y-1 text-sm text-zinc-400">
+        <ul className="space-y-1 text-sm text-app-fg-muted">
           {problem.symptoms.map((s) => (
             <li key={s} className="flex gap-2">
-              <span className="text-zinc-600">•</span>
+              <span className="text-app-fg-subtle">•</span>
               <span>{s}</span>
             </li>
           ))}
@@ -49,14 +49,14 @@ export function ProblemPanel({ problem, showHint }: ProblemPanelProps) {
       </div>
 
       {problem.howToTest && problem.howToTest.length > 0 && (
-        <div className="mb-4 rounded-md border border-teal-500/25 bg-teal-950/25 px-3 py-2.5">
-          <h3 className="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-teal-400/90">
+        <div className="mb-4 rounded-md border border-teal-200 bg-teal-50 px-3 py-2.5 dark:border-teal-500/25 dark:bg-teal-950/25">
+          <h3 className="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-teal-700 dark:text-teal-400/90">
             How to see this bug
           </h3>
-          <ul className="space-y-1 text-sm text-zinc-300">
+          <ul className="space-y-1 text-sm text-app-fg-secondary">
             {problem.howToTest.map((step, index) => (
               <li key={step} className="flex gap-2">
-                <span className="shrink-0 text-teal-500/70">{index + 1}.</span>
+                <span className="shrink-0 text-teal-600 dark:text-teal-500/70">{index + 1}.</span>
                 <span>{step}</span>
               </li>
             ))}
@@ -65,13 +65,13 @@ export function ProblemPanel({ problem, showHint }: ProblemPanelProps) {
       )}
 
       <div className="mb-4">
-        <h3 className="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-zinc-500">
+        <h3 className="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-app-fg-subtle">
           Your task
         </h3>
-        <ul className="space-y-1 text-sm text-zinc-300">
+        <ul className="space-y-1 text-sm text-app-fg-secondary">
           {problem.yourTask.map((t) => (
             <li key={t} className="flex gap-2">
-              <span className="text-amber-500/60">→</span>
+              <span className="text-amber-600 dark:text-amber-500/60">→</span>
               <span>{t}</span>
             </li>
           ))}

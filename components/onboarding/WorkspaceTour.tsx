@@ -209,7 +209,7 @@ function computeStepLayout(step: TourStep, cardW: number, cardH: number): StepLa
 
 function SpotlightMask({ rect }: { rect: Rect }) {
   const { top, left, width, height } = rect
-  const shade = 'fixed z-[1201] bg-zinc-950/80 backdrop-blur-[1px]'
+  const shade = 'fixed z-[1201] bg-app-overlay backdrop-blur-[1px]'
 
   return (
     <>
@@ -239,7 +239,7 @@ function SpotlightMask({ rect }: { rect: Rect }) {
 
 function TourArrow({ top, left, dir }: { top: number; left: number; dir: ArrowDir }) {
   const size = 8
-  const border = 'rgb(39 39 42)'
+  const border = 'var(--app-tour-arrow)'
   const styles: Record<ArrowDir, React.CSSProperties> = {
     down: {
       borderWidth: `0 ${size}px ${size}px ${size}px`,
@@ -351,7 +351,7 @@ export function WorkspaceTour({ open, onComplete, onSkip }: WorkspaceTourProps) 
       {layout ? (
         <SpotlightMask rect={layout.spotlight} />
       ) : (
-        <div className="fixed inset-0 z-[1201] bg-zinc-950/80" aria-hidden />
+        <div className="fixed inset-0 z-[1201] bg-app-overlay" aria-hidden />
       )}
 
       {layout && (
@@ -371,7 +371,7 @@ export function WorkspaceTour({ open, onComplete, onSkip }: WorkspaceTourProps) 
           <motion.div
             ref={cardRef}
             className={cn(
-              'relative w-full rounded-xl border border-zinc-700/90 bg-zinc-900 p-4 shadow-2xl shadow-black/60'
+              'relative w-full rounded-xl border border-app-input-border bg-app-tour-card p-4 shadow-tour-card'
             )}
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
@@ -381,25 +381,25 @@ export function WorkspaceTour({ open, onComplete, onSkip }: WorkspaceTourProps) 
             <button
               type="button"
               onClick={onSkip}
-              className="absolute right-2 top-2 rounded-md p-1 text-zinc-500 transition-colors hover:bg-zinc-800 hover:text-zinc-200"
+              className="absolute right-2 top-2 rounded-md p-1 text-app-fg-subtle transition-colors hover:bg-app-hover hover:text-app-fg-secondary"
               aria-label="Close tour"
             >
               <X className="h-3.5 w-3.5" />
             </button>
             <div className="mb-2 flex items-center gap-2 pr-6 text-amber-400">
               <Sparkles className="h-4 w-4 shrink-0" />
-              <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-app-fg-subtle">
                 Step {stepIndex + 1} of {WORKSPACE_TOUR_STEPS.length}
               </span>
             </div>
-            <h3 className="mb-1.5 text-sm font-semibold text-zinc-50">{step.title}</h3>
-            <p className="mb-4 text-sm leading-relaxed text-zinc-400">{step.body}</p>
+            <h3 className="mb-1.5 text-sm font-semibold text-app-fg">{step.title}</h3>
+            <p className="mb-4 text-sm leading-relaxed text-app-fg-muted">{step.body}</p>
 
             <div className="flex items-center justify-between gap-2">
               <button
                 type="button"
                 onClick={onSkip}
-                className="text-xs text-zinc-500 transition-colors hover:text-zinc-300"
+                className="text-xs text-app-fg-subtle transition-colors hover:text-app-fg-secondary"
               >
                 Skip tour
               </button>
@@ -408,7 +408,7 @@ export function WorkspaceTour({ open, onComplete, onSkip }: WorkspaceTourProps) 
                   <button
                     type="button"
                     onClick={handleBack}
-                    className="inline-flex h-7 items-center gap-0.5 rounded bg-zinc-800 px-2 text-xs text-zinc-300 hover:bg-zinc-700"
+                    className="inline-flex h-7 items-center gap-0.5 rounded bg-app-control px-2 text-xs text-app-fg-secondary hover:bg-app-control-hover"
                   >
                     <ChevronLeft className="h-3 w-3" />
                     Back

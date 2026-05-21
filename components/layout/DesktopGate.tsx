@@ -21,7 +21,7 @@ export function DesktopGate({ children }: DesktopGateProps) {
   }, [])
 
   if (isDesktop === null) {
-    return <div className="min-h-screen bg-zinc-950" />
+    return <div className="min-h-screen bg-app-bg" />
   }
 
   if (!isDesktop) {

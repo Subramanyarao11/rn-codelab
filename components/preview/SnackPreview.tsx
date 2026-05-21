@@ -65,11 +65,11 @@ export function SnackPreview({ code, platform, runKey }: SnackPreviewProps) {
   }
 
   return (
-    <div className="relative h-full min-h-0 flex-1 bg-zinc-900">
+    <div className="relative h-full min-h-0 flex-1 bg-app-surface">
       {loading && (
-        <div className="absolute inset-0 z-10 flex items-center justify-center bg-zinc-900">
-          <div className="h-8 w-8 animate-pulse rounded-full bg-zinc-700" />
-          <span className="ml-3 text-sm text-zinc-500">Loading Snack preview…</span>
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-app-surface">
+          <div className="h-8 w-8 animate-pulse rounded-full bg-app-control-hover" />
+          <span className="ml-3 text-sm text-app-fg-subtle">Loading Snack preview…</span>
         </div>
       )}
       <iframe
@@ -84,11 +84,11 @@ export function SnackPreview({ code, platform, runKey }: SnackPreviewProps) {
       <div
         className={cn(
           'absolute right-3 top-3 flex items-center gap-1.5 rounded-full px-2 py-1 text-xs',
-          ready ? 'bg-zinc-800/90 text-teal-400' : 'bg-zinc-800/90 text-zinc-500'
+          ready ? 'bg-app-control text-teal-600 dark:text-teal-400' : 'bg-app-control text-app-fg-subtle'
         )}
       >
         <span
-          className={cn('h-2 w-2 rounded-full', ready ? 'bg-teal-400' : 'bg-zinc-500 animate-pulse')}
+          className={cn('h-2 w-2 rounded-full', ready ? 'bg-teal-500 dark:bg-teal-400' : 'animate-pulse bg-app-fg-subtle')}
         />
         {ready ? 'Running' : 'Loading'}
       </div>

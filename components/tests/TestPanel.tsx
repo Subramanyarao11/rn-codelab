@@ -71,14 +71,14 @@ export function TestPanel({ problem, code, showingSolution = false }: TestPanelP
   return (
     <div className="flex h-full min-h-0 flex-col">
       <ConfettiBurst active={confetti} onDone={() => setConfetti(false)} />
-      <div className="flex shrink-0 justify-end border-b border-zinc-800/50 px-3 py-1.5">
+      <div className="flex shrink-0 justify-end border-b border-app-border px-3 py-1.5">
         <Button size="sm" variant="primary" onClick={handleCheck} disabled={running}>
           {running ? 'Checking…' : 'Check'}
         </Button>
       </div>
       <div className="min-h-0 flex-1 overflow-y-auto px-3 py-2">
         {showingSolution && (
-          <p className="mb-2 text-xs text-zinc-500">
+          <p className="mb-2 text-xs text-app-fg-subtle">
             Verifying tests against solution code (progress not saved until you fix it yourself).
           </p>
         )}

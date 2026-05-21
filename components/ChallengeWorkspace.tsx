@@ -27,7 +27,7 @@ import {
 const CodeEditor = dynamic(() => import('@/components/editor/CodeEditor'), {
   ssr: false,
   loading: () => (
-    <div className="flex h-full items-center justify-center bg-[#1e1e1e] text-zinc-500">
+    <div className="flex h-full items-center justify-center bg-app-editor-loading text-app-fg-subtle">
       Loading editor…
     </div>
   ),
@@ -168,7 +168,7 @@ export function ChallengeWorkspace({ problem }: ChallengeWorkspaceProps) {
   }
 
   return (
-    <div className="fixed inset-0 z-0 flex overflow-hidden bg-zinc-950">
+    <div className="fixed inset-0 z-0 flex overflow-hidden bg-app-bg">
       <Sidebar />
 
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">

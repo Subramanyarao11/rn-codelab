@@ -19,7 +19,7 @@ const TAG_COLORS: Record<string, string> = {
   'React Navigation': 'bg-pink-500/20 text-pink-300',
 }
 
-const DEFAULT_COLOR = 'bg-zinc-700/50 text-zinc-300'
+const DEFAULT_COLOR = 'bg-app-control text-app-fg-secondary'
 
 export function TagBadge({ tag }: { tag: string }) {
   const colorClass = TAG_COLORS[tag] ?? DEFAULT_COLOR

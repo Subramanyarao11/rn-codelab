@@ -13,7 +13,7 @@ export function Badge({ children, className, variant = 'default' }: BadgeProps) 
         'inline-flex items-center rounded px-2 py-0.5 text-xs font-medium',
         variant === 'ftb' && 'bg-amber-500 text-white',
         variant === 'success' && 'bg-green-500/20 text-green-400',
-        variant === 'default' && 'bg-zinc-800 text-zinc-300',
+        variant === 'default' && 'bg-app-control text-app-fg-secondary',
         className
       )}
     >

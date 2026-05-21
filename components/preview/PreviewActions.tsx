@@ -26,7 +26,7 @@ export function PreviewActions({
     <div className="flex items-center gap-2">
       {showPlatformPicker && onPlatformChange && (
         <div
-          className="flex rounded border border-zinc-700 bg-zinc-900"
+          className="flex rounded border border-app-input-border bg-app-control"
           title="Simulate Platform.OS for preview"
         >
           {PLATFORMS.map((p) => (
@@ -37,8 +37,8 @@ export function PreviewActions({
               className={cn(
                 'px-2 py-0.5 text-[10px] capitalize transition-colors',
                 platform === p
-                  ? 'bg-zinc-700 text-teal-400'
-                  : 'text-zinc-500 hover:text-zinc-300'
+                  ? 'bg-app-control-hover text-teal-600 dark:text-teal-400'
+                  : 'text-app-fg-subtle hover:text-app-fg-secondary'
               )}
             >
               {p}
@@ -50,8 +50,8 @@ export function PreviewActions({
         type="button"
         onClick={onOpenSnack}
         className={cn(
-          'inline-flex h-7 items-center gap-1 rounded px-2 text-[10px] font-medium text-zinc-500',
-          'transition-colors hover:bg-zinc-800 hover:text-zinc-300'
+          'inline-flex h-7 items-center gap-1 rounded px-2 text-[10px] font-medium text-app-fg-subtle',
+          'transition-colors hover:bg-app-hover hover:text-app-fg-secondary'
         )}
         title="Open in Expo Snack (test on real iOS/Android)"
       >

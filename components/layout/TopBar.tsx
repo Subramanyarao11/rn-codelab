@@ -6,6 +6,7 @@ import { ChevronLeft, ChevronRight, HelpCircle } from 'lucide-react'
 import type { ProblemDefinition } from '@/lib/types'
 import { Badge } from '@/components/ui/Badge'
 import { Button, toolbarLinkClass } from '@/components/ui/Button'
+import { ThemeToggle } from '@/components/theme/ThemeToggle'
 import { fadeInDown } from '@/lib/motion'
 
 interface TopBarProps {
@@ -33,15 +34,16 @@ export function TopBar({
   return (
     <motion.header
       data-tour="toolbar"
-      className="flex shrink-0 items-center justify-between gap-4 border-b border-zinc-800/90 bg-zinc-900/30 px-4 py-2"
+      className="flex shrink-0 items-center justify-between gap-4 border-b border-app-border bg-app-surface-elevated px-4 py-2"
       {...fadeInDown}
     >
       <div className="flex min-w-0 items-center gap-3">
         <Badge variant="ftb">FTB #{problem.id}</Badge>
-        <h1 className="truncate text-sm font-semibold text-zinc-100">{problem.title}</h1>
+        <h1 className="truncate text-sm font-semibold text-app-fg">{problem.title}</h1>
       </div>
 
       <div data-tour="toolbar-actions" className="flex shrink-0 items-center gap-1.5">
+        <ThemeToggle />
         {onShowTour && (
           <Button size="sm" variant="ghost" onClick={onShowTour} title="Workspace tour">
             <HelpCircle className="h-3.5 w-3.5" />

@@ -14,10 +14,10 @@ export function PanelFrame({ label, children, actions, className, tourId }: Pane
   return (
     <div
       data-tour={tourId}
-      className={cn('flex h-full min-h-0 flex-col bg-zinc-950', className)}
+      className={cn('flex h-full min-h-0 flex-col bg-app-bg', className)}
     >
-      <div className="flex shrink-0 items-center justify-between border-b border-zinc-800/90 bg-zinc-900/40 px-3 py-2">
-        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500">
+      <div className="flex shrink-0 items-center justify-between border-b border-app-border bg-app-surface-elevated px-3 py-2">
+        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-app-fg-subtle">
           {label}
         </span>
         {actions ? <div className="flex items-center gap-2">{actions}</div> : null}

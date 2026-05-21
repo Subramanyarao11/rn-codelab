@@ -12,13 +12,15 @@ export function EditorToolbar() {
 
   return (
     <div className="flex items-center gap-2">
-      <span className="hidden text-[10px] text-zinc-600 lg:inline">Ctrl+Space · autocomplete</span>
+      <span className="hidden text-[10px] text-app-fg-subtle lg:inline">
+        Ctrl+Space · autocomplete
+      </span>
       <select
         value={editor.theme}
         onChange={(e) => setEditorSettings({ theme: e.target.value as EditorThemeId })}
         className={cn(
-          'h-7 max-w-[140px] cursor-pointer rounded border border-zinc-700 bg-zinc-900',
-          'px-2 text-[10px] text-zinc-300 outline-none focus:border-amber-500/50'
+          'h-7 max-w-[140px] cursor-pointer rounded border border-app-input-border bg-app-control',
+          'px-2 text-[10px] text-app-fg-secondary outline-none focus:border-amber-500/50'
         )}
         aria-label="Editor theme"
       >
@@ -28,28 +30,28 @@ export function EditorToolbar() {
           </option>
         ))}
       </select>
-      <div className="flex items-center rounded border border-zinc-700 bg-zinc-900">
+      <div className="flex items-center rounded border border-app-input-border bg-app-control">
         <button
           type="button"
           onClick={() => setEditorSettings({ fontSize: Math.max(11, editor.fontSize - 1) })}
-          className="px-1.5 py-0.5 text-zinc-400 hover:text-zinc-200"
+          className="px-1.5 py-0.5 text-app-fg-muted hover:text-app-fg-secondary"
           aria-label="Decrease font size"
         >
           <Minus className="h-3 w-3" />
         </button>
-        <span className="min-w-[28px] text-center text-[10px] tabular-nums text-zinc-400">
+        <span className="min-w-[28px] text-center text-[10px] tabular-nums text-app-fg-muted">
           {editor.fontSize}
         </span>
         <button
           type="button"
           onClick={() => setEditorSettings({ fontSize: Math.min(20, editor.fontSize + 1) })}
-          className="px-1.5 py-0.5 text-zinc-400 hover:text-zinc-200"
+          className="px-1.5 py-0.5 text-app-fg-muted hover:text-app-fg-secondary"
           aria-label="Increase font size"
         >
           <Plus className="h-3 w-3" />
         </button>
       </div>
-      <label className="flex cursor-pointer items-center gap-1 text-[10px] text-zinc-500">
+      <label className="flex cursor-pointer items-center gap-1 text-[10px] text-app-fg-subtle">
         <input
           type="checkbox"
           checked={editor.wordWrap}
@@ -58,7 +60,7 @@ export function EditorToolbar() {
         />
         Wrap
       </label>
-      <label className="flex cursor-pointer items-center gap-1 text-[10px] text-zinc-500">
+      <label className="flex cursor-pointer items-center gap-1 text-[10px] text-app-fg-subtle">
         <input
           type="checkbox"
           checked={editor.minimap}
