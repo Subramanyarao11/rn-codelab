@@ -2,7 +2,8 @@
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Bug, Check, ChevronRight, GitPullRequest, Sparkles } from 'lucide-react'
+import { Bug, Check, ChevronRight, Github, GitPullRequest, Sparkles } from 'lucide-react'
+import { GITHUB_REPO_URL } from '@/lib/github'
 import { PROBLEMS, TOTAL_PROBLEMS } from '@/lib/problems'
 import { useStore } from '@/lib/store'
 import { cn } from '@/lib/cn'
@@ -33,6 +34,16 @@ export function HomeContent() {
             </div>
           </div>
           <div className="flex items-center gap-3">
+            <a
+              href={GITHUB_REPO_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              title="View source on GitHub"
+              aria-label="View source on GitHub"
+              className="flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-800 bg-zinc-900/50 text-zinc-500 transition-colors hover:border-zinc-700 hover:bg-zinc-800/80 hover:text-zinc-200"
+            >
+              <Github className="h-4 w-4" />
+            </a>
             <Link
               href="/contribute"
               className="hidden h-8 items-center rounded-lg border border-teal-500/30 bg-teal-500/10 px-3 text-xs font-medium text-teal-300 transition-colors hover:border-teal-500/50 hover:bg-teal-500/15 sm:inline-flex"
@@ -61,8 +72,17 @@ export function HomeContent() {
             <span className="text-zinc-500">Find it. Fix it. Pass the tests.</span>
           </h1>
           <p className="mb-6 max-w-2xl text-sm leading-relaxed text-zinc-400">
-            Hands-on debugging labs inspired by interactive React courses. Edit real RN code in the
-            browser, preview with Expo Snack, and validate your fix with automated tests.
+            Hands-on debugging labs — edit real RN code in the browser, preview live, and validate
+            your fix with automated tests. Inspired by{' '}
+            <a
+              href="https://react.chaicode.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-zinc-500 underline decoration-zinc-700 underline-offset-2 transition-colors hover:text-zinc-300 hover:decoration-zinc-500"
+            >
+              Chai reactLabs
+            </a>
+            .
           </p>
           <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
             <Link
