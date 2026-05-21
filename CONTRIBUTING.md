@@ -31,6 +31,16 @@ npm run dev
 npm run build
 ```
 
+## Security
+
+Submissions are scanned automatically for:
+
+- Size limits and plain-text metadata (no HTML)
+- Dangerous APIs (`eval`, `fetch`, `document`, dynamic `import`, etc.)
+- Valid JSX that transpiles and defines an `App` component
+
+Maintainers should still preview submissions in the workspace before merging. Never merge code you have not run through **Check** locally.
+
 ## Review criteria
 
 We accept challenges that:

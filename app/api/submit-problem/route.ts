@@ -23,7 +23,11 @@ export async function POST(request: Request) {
 
   let body: ProblemSubmission
   try {
-    body = (await request.json()) as ProblemSubmission
+    const raw = await request.text()
+    if (raw.length > 120_000) {
+      return NextResponse.json({ error: 'Submission payload too large' }, { status: 413 })
+    }
+    body = JSON.parse(raw) as ProblemSubmission
   } catch {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 })
   }

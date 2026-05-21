@@ -11,6 +11,7 @@ import {
   validateSubmission,
   type ProblemSubmission,
 } from '@/lib/submission'
+import { SUBMISSION_LIMITS } from '@/lib/codeSandbox'
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/cn'
 
@@ -89,6 +90,7 @@ export function SubmitProblemForm() {
         issueUrl?: string
         configured?: boolean
         error?: string
+        fields?: Partial<Record<keyof ProblemSubmission, string>>
       }
 
       if (res.ok && data.issueUrl) {
@@ -97,8 +99,27 @@ export function SubmitProblemForm() {
         return
       }
 
-      openGithubIssueFallback(form)
-      setStatus('fallback')
+      if (res.status === 400 && 'fields' in data && data.fields) {
+        setErrors(data.fields as Partial<Record<keyof ProblemSubmission, string>>)
+        setStatus('idle')
+        return
+      }
+
+      if (res.status === 413) {
+        setErrors({ brokenCode: 'Submission is too large. Shorten code blocks and try again.' })
+        setStatus('idle')
+        return
+      }
+
+      // API not configured — fall back to opening GitHub issue (already validated client-side)
+      if (res.status === 503) {
+        openGithubIssueFallback(form)
+        setStatus('fallback')
+        return
+      }
+
+      setErrors({ title: data.error ?? 'Submission failed. Please try again.' })
+      setStatus('idle')
     } catch {
       openGithubIssueFallback(form)
       setStatus('fallback')
@@ -117,6 +138,22 @@ export function SubmitProblemForm() {
         autoComplete="off"
         aria-hidden
       />
+
+      <div className="rounded-lg border border-zinc-700/80 bg-zinc-900/60 px-4 py-3 text-xs leading-relaxed text-zinc-400">
+        <p className="mb-1 font-medium text-zinc-300">Submission guidelines</p>
+        <ul className="list-inside list-disc space-y-0.5 text-zinc-500">
+          <li>React Native challenge code only — must export an <code className="text-zinc-400">App</code> component</li>
+          <li>No network, DOM, eval, dynamic imports, or storage access</li>
+          <li>Max {SUBMISSION_LIMITS.MAX_CODE_CHARS.toLocaleString()} characters per code block</li>
+          <li>Plain text only in descriptions (no HTML tags)</li>
+        </ul>
+      </div>
+
+      {Object.keys(errors).length > 0 && status === 'idle' && (
+        <div className="rounded-lg border border-red-500/30 bg-red-950/25 px-4 py-3 text-sm text-red-300">
+          Fix the highlighted fields before submitting.
+        </div>
+      )}
 
       <section className="space-y-4 rounded-xl border border-zinc-800 bg-zinc-900/40 p-5">
         <h2 className="text-sm font-semibold text-zinc-200">About you</h2>
@@ -164,7 +201,7 @@ export function SubmitProblemForm() {
           />
         </Field>
         <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Difficulty *" alignHintRow>
+          <Field label="Difficulty *" alignHintRow error={errors.difficulty}>
             <select
               className={inputClass}
               value={form.difficulty}
@@ -175,7 +212,7 @@ export function SubmitProblemForm() {
               <option value="advanced">Advanced</option>
             </select>
           </Field>
-          <Field label="Tags" hint="Comma-separated" alignHintRow>
+          <Field label="Tags" hint="Comma-separated" alignHintRow error={errors.tags}>
             <input
               className={inputClass}
               value={form.tags}
@@ -220,6 +257,11 @@ export function SubmitProblemForm() {
 
       <section className="space-y-4 rounded-xl border border-zinc-800 bg-zinc-900/40 p-5">
         <h2 className="text-sm font-semibold text-zinc-200">Code</h2>
+        <p className="text-[11px] leading-relaxed text-zinc-600">
+          Use only React Native APIs available in the lab preview (View, Text, hooks, etc.). Imports
+          from <code className="text-zinc-500">react</code> and{' '}
+          <code className="text-zinc-500">react-native</code> are stripped automatically.
+        </p>
         <Field label="Broken starter code *" error={errors.brokenCode}>
           <textarea
             className={cn(textareaClass, 'min-h-[200px]')}
